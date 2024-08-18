@@ -14,7 +14,16 @@ class WalletType extends Model
         'name'
     ];
 
-    public function wallets(){
+    protected function casts(): array
+    {
+        return [
+            'name' => 'array'
+        ];
+    }
+
+    //relation with wallet
+    public function wallets()
+    {
         return $this->hasMany(Wallet::class);
     }
 }

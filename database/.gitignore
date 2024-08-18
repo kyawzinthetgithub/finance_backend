@@ -1,4 +1,1 @@
 *.sqlite*
-vendor
-.env
-composer.lock
