@@ -17,7 +17,7 @@ class WalletType extends Model
     protected function casts(): array
     {
         return [
-            'name' => 'array'
+            'name' => 'string'
         ];
     }
 
