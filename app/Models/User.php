@@ -21,6 +21,7 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'image',
         'password',
     ];
 
@@ -45,16 +46,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    //check already register
-    public function already_register($id)
-    {
-        $user = $this->findOrFail($id);
-        if ($user) {
-            return true;
-        }
-        return false;
     }
 
     //relation with wallet

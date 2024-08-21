@@ -12,33 +12,16 @@ class AuthController extends Controller
 {
     protected $repo;
 
-    public function __construct(UserRepository $repo){
-
+    public function __construct(UserRepository $repo)
+    {
+        $this->repo = $repo;
     }
     //api user register
     public function register(Request $request)
     {
-
-
-
-
-        // $request->validate([
-        //     'name' => 'required',
-        //     'email' => 'required|unique:users',
-        //     'password' => 'required|confirmed|min:6|max:12'
-        // ]);
-
-        // $user = User::create([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password)
-        // ]);
-
-        // $token = $user->createToken($request->name);
-
-        // return [
-        //     'user' => $user,
-        //     'token' => $token->plainTextToken
-        // ];
+        $user = User::where('email',$request->email)->latest()->first();
+        abort_if($user,442,$message='You already registered');
+        $response = $this->repo->store($request);
+        return $response;
     }
 }
