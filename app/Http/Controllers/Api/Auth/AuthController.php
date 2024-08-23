@@ -19,9 +19,20 @@ class AuthController extends Controller
     //api user register
     public function register(Request $request)
     {
-        $user = User::where('email',$request->email)->latest()->first();
-        abort_if($user,442,$message='You already registered');
+        $user = User::where('email', $request->email)->latest()->first();
+        abort_if($user, 442, 'You already registered');
         $response = $this->repo->store($request);
+        return $response;
+    }
+
+    public function login(Request $request)
+    {
+        $response = $this->repo->login($request);
+        return $response;
+    }
+
+    public function logout(Request $request) {
+        $response = $this->repo->logout($request);
         return $response;
     }
 }

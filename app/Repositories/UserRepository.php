@@ -12,7 +12,7 @@ class UserRepository
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|unique:users',
+            'email' => 'required|unique:users|email',
             'password' => 'required|confirmed|min:6|max:12',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -34,6 +34,34 @@ class UserRepository
         return [
             'user' => $user,
             'token' => $token->plainTextToken
+        ];
+    }
+
+    public function login($request){
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required'
+        ]);
+
+        $user = User::where('email',$request->email)->latest()->first();
+        abort_if(!$user,422,'You haven\'t register yet');
+        if($user && !Hash::check($request->password,$user->password)){
+            return [
+                'message' => 'Unauthenticated'
+            ];
+        }else{
+            $token = $user->createToken($user->name);
+            return [
+                'user' => $user,
+                'token' => $token->plainTextToken
+            ];
+        }
+    }
+
+    public function logout(Request $request){
+        $request->user()->currentAccessToken()->delete();
+        return [
+            'message' => 'Logout Success'
         ];
     }
 }
