@@ -35,4 +35,6 @@ class AuthController extends Controller
         $response = $this->repo->logout($request);
         return $response;
     }
+
+    
 }
