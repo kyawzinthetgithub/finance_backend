@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository
@@ -17,9 +18,9 @@ class UserRepository
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        if($request->hasFile('image')){
-            $profile = uniqid().$request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/profile/',$profile);
+        if ($request->hasFile('image')) {
+            $profile = uniqid() . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public/profile/', $profile);
         }
 
         $user = User::create([
@@ -37,19 +38,20 @@ class UserRepository
         ];
     }
 
-    public function login($request){
+    public function login($request)
+    {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        $user = User::where('email',$request->email)->latest()->first();
-        abort_if(!$user,422,'You haven\'t register yet');
-        if($user && !Hash::check($request->password,$user->password)){
+        $user = User::where('email', $request->email)->latest()->first();
+        abort_if(!$user, 422, 'You haven\'t register yet');
+        if ($user && !Hash::check($request->password, $user->password)) {
             return [
                 'message' => 'Unauthenticated'
             ];
-        }else{
+        } else {
             $token = $user->createToken($user->name);
             return [
                 'user' => $user,
@@ -58,10 +60,64 @@ class UserRepository
         }
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $request->user()->currentAccessToken()->delete();
         return [
             'message' => 'Logout Success'
         ];
+    }
+
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return $user;
+    }
+
+    public function update($request, $id)
+    {
+        $user = User::findOrFail($id);
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|unique:users|email',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $userImg = $user->image;
+            if ($userImg) {
+                $filePath = storage_path('app/public/profile/' . $userImg);
+                if (File::exists($filePath)) {
+                    File::delete($filePath);
+                } else {
+                    return ['message' => 'File Not Found'];
+                }
+            }
+            $profile = uniqid() . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public/profile/', $profile);
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'image' => $profile
+        ]);
+
+        return $user;
+    }
+
+    public function changePassword($request, $id)
+    {
+        $user = User::findOrFail($id);
+        $request->validate([
+            'old_password' => 'required|min:6|max:12',
+            'new_password' => 'required|min:6|max:12',
+            'confirm_password' => 'required|min:6|max:12|same:new_password'
+        ]);
+        abort_if(!Hash::check($request->old_password, $user->password), 401, 'wrong password');
+        $user->update([
+            'password' => Hash::make($request->confirm_password)
+        ]);
+        return $user;
     }
 }

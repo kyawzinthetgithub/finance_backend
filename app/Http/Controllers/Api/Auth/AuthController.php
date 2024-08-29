@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,5 +37,21 @@ class AuthController extends Controller
         return $response;
     }
 
-    
+    public function edit($id)
+    {
+        $response = $this->repo->edit($id);
+        return (new UserResource($response));
+    }
+
+    public function update(Request $request,$id)
+    {
+        $response = $this->repo->update($request,$id);
+        return (new UserResource($response));
+    }
+
+    public function changePassword(Request $request,$id)
+    {
+        $response = $this->repo->changePassword($request,$id);
+        return (new UserResource($response));
+    }
 }

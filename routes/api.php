@@ -16,7 +16,9 @@ Route::post('/login',[AuthController::class,'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout',[AuthController::class,'logout']);
-    Route::post('/profile-update',[AuthController::class,'update']);
+    Route::get('/profile-edit/{id}',[AuthController::class,'edit']);
+    Route::post('/profile-update/{id}',[AuthController::class,'update']);
+    Route::post('/change-password/{id}',[AuthController::class,'changePassword']);
 
     Route::group(['prefix'=>'wallet','controller'=>WalletController::class],function(){
         Route::post('/create','store');
