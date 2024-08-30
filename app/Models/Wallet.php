@@ -13,7 +13,7 @@ class Wallet extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id','wallet_type_id','name','amount'
+        'user_id','wallet_type_id','name','bank_name','amount'
     ];
 
     //relation with wallet type and wallet

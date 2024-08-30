@@ -17,5 +17,6 @@ class WalletController extends Controller
     public function store(Request $request)
     {
         $this->repo->store($request);
+        return response(['data' => 'success'],200);
     }
 }
