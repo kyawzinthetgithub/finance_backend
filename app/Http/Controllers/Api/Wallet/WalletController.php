@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\Wallet;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Repositories\WalletRepository;
-use Illuminate\Http\Request;
+use App\Http\Resources\Wallet\UserWalletResource;
+use App\Http\Resources\Wallet\UserWalletCollection;
+use Carbon\Carbon;
 
 class WalletController extends Controller
 {
@@ -18,5 +21,11 @@ class WalletController extends Controller
     {
         $this->repo->store($request);
         return response(['data' => 'success'],200);
+    }
+
+    public function UserWallet(Request $request)
+    {
+        $res = $this->repo->UserWallet($request);
+        return UserWalletCollection::make($res);
     }
 }

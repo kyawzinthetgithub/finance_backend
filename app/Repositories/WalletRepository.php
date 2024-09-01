@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,5 +28,13 @@ class WalletRepository
             'amount' => $request->amount
         ]);
         return $wallet;
+    }
+
+    public function UserWallet($request)
+    {
+        $user = User::findOrFail($request->auth_user);
+        abort_if($request->auth_user != $user->id,401,'User Not Found');
+        $user_wallet = $user->wallets()->get();
+        return $user_wallet;
     }
 }
