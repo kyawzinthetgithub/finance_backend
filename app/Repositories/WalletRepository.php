@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class WalletRepository
 {
@@ -36,5 +37,13 @@ class WalletRepository
         abort_if($request->auth_user != $user->id,401,'User Not Found');
         $user_wallet = $user->wallets()->get();
         return $user_wallet;
+    }
+
+    public function destory($id)
+    {
+        $wallet = Wallet::findOrFail($id);
+        abort_if(!$wallet,404,'Wallet not found');
+        $wallet->delete();
+        return response(['message' => 'success'],200);
     }
 }

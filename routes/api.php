@@ -26,5 +26,6 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
     Route::group(['prefix'=>'wallet','controller'=>WalletController::class],function(){
         Route::post('/create','store');
         Route::get('/user-wallet','UserWallet');
+        Route::delete('/delete/{walletId}','destory');
     });
 });

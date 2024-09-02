@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreignId('to_wallet_id')->references('id')->on('wallets')->onDelete('cascade')->nullabel(false);
             $table->string('description')->nullable(false)->default('text');
             $table->integer('amount')->nullable(false);
-            $table->softDeletes();
             $table->timestamps();
         });
     }

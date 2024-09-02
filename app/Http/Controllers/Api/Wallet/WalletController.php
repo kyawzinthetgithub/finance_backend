@@ -28,4 +28,9 @@ class WalletController extends Controller
         $res = $this->repo->UserWallet($request);
         return UserWalletCollection::make($res);
     }
+
+    public function destory($id)
+    {
+        return $this->repo->destory($id);
+    }
 }
