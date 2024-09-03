@@ -46,4 +46,20 @@ class WalletRepository
         $wallet->delete();
         return response(['message' => 'success'],200);
     }
+
+    public function getDeleteWallet($request)
+    {
+        $wallet = Wallet::where('user_id',$request->user_id)->withTrashed()->get();
+        abort_if(!$wallet,422,'Wallet not found');
+        return $wallet;
+    }
+
+    public function restoreWallet($request)
+    {
+        $wallet = Wallet::where('user_id',$request->user_id)->where('id',$request->wallet_id)->withTrashed()->latest()->first();
+        abort_if(!$wallet,422,'Wallet not found');
+        $wallet->deleted_at = null;
+        $wallet->save();
+        return response(['message' => 'restore success'],200);
+    }
 }

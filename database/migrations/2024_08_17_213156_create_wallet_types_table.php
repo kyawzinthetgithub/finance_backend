@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('wallet_types', function (Blueprint $table) {
             $table->id('id');
             $table->string('name');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

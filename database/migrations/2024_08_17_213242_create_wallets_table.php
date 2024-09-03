@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable(false);
             $table->string('bank_name')->nullable();
             $table->integer('amount')->nullabel(false)->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -25,7 +25,8 @@ class UserWalletResource extends JsonResource
             'name' => $this->name ?? '-',
             'bank_name' => $this->bank_name ?? '-',
             'amount' => $this->amount ?? '0',
-            'created_at' => $this->created_at->format('d-m-Y h:m:s a')
+            'created_at' => $this->created_at?->format('d-m-Y h:m:s a')??'-',
+            'deleted_at' => $this->deleted_at?->format('d-m-Y h:m:s a')??'-'
         ];
     }
 }

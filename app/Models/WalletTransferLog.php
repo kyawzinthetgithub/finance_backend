@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Models\Wallet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WalletTransferLog extends Model
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     protected $fillable = [
         'from_wallet_id','to_wallet_id','description','amount'

@@ -33,4 +33,15 @@ class WalletController extends Controller
     {
         return $this->repo->destory($id);
     }
+
+    public function getDeleteWallet(Request $request)
+    {
+        $res = $this->repo->getDeleteWallet($request);
+        return UserWalletCollection::make($res);
+    }
+
+    public function restoreWallet(Request $request)
+    {
+        return $this->repo->restoreWallet($request);
+    }
 }
