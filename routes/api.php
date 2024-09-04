@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Wallet\WalletController;
 use App\Http\Controllers\Api\WalletType\WalletTypeController;
+use App\Http\Controllers\Api\IncomeExpendCategory\CategoryController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -22,6 +23,10 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
     Route::post('/change-password/{id}',[AuthController::class,'changePassword']);
 
     Route::get('wallet-type',[WalletTypeController::class,'getAll']);
+
+    Route::group(['controller' => CategoryController::class,'prefix' => 'category'],function(){
+        Route::get('/','index');
+    });
 
     Route::group(['prefix'=>'wallet','controller'=>WalletController::class],function(){
         Route::post('/create','store');
