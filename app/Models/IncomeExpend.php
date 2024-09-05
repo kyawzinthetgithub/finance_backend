@@ -17,6 +17,11 @@ class IncomeExpend extends Model
         'type'
     ];
 
+    const TYPE = [
+        'income' => 'income',
+        'expend' => 'expend'
+    ];
+
     //relation with wallet and income_expend
     public function wallet()
     {
