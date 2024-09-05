@@ -34,4 +34,10 @@ class Wallet extends Model
     {
         return $this->hasMany(WalletTransferLog::class);
     }
+
+    //relation with wallet and income_expends
+    public function income_expends()
+    {
+        return $this->hasMany(IncomeExpend::class);
+    }
 }

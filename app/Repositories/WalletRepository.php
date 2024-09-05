@@ -36,7 +36,12 @@ class WalletRepository
         $user = User::findOrFail($request->auth_user);
         abort_if($request->auth_user != $user->id,401,'User Not Found');
         $user_wallet = $user->wallets()->get();
-        return $user_wallet;
+        $total_amount = $user_wallet->sum('amount');
+        $data = [
+            'user_wallet' => $user_wallet,
+            'total_amount' => $total_amount
+        ];
+        return $data;
     }
 
     public function destory($id)
