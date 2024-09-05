@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\WalletType;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\WalletType\WalletTypeCollection;
 use App\Repositories\WalletTypeRepository;
 use Illuminate\Http\Request;
 
@@ -17,6 +18,6 @@ class WalletTypeController extends Controller
     public function getAll()
     {
         $response = $this->repo->getAll();
-        return $response;
+        return new WalletTypeCollection($response);
     }
 }
