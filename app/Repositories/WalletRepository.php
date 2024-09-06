@@ -21,6 +21,7 @@ class WalletRepository
     {
         return $this->hashids->decode($id)[0];
     }
+
     public function store(Request $request)
     {
         $wallet_type_id = $this->byHash($request->wallet_type_id);
