@@ -7,6 +7,7 @@ use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\User\UserResource;
 
 class UserRepository
 {
@@ -66,7 +67,7 @@ class UserRepository
         } else {
             $token = $user->createToken($user->name);
             return [
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $token->plainTextToken
             ];
         }

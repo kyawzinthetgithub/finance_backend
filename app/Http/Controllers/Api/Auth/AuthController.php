@@ -33,11 +33,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $res = $this->repo->login($request);
-        $response = [
-            'user' => new UserResource($res['user']),
-            'token' => $res['token']
-        ];
-        return $response;
+        return $res;
     }
 
     public function logout(Request $request) {
