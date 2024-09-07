@@ -2,11 +2,11 @@
 
 namespace App\Repositories;
 
-use App\Models\IncomeExpend;
-use App\Models\Wallet;
 use Hashids\Hashids;
+use App\Models\Wallet;
+use App\Models\IncomeExpend;
 
-class IncomeRepository
+class ExpendRepository
 {
     protected $hashids;
     public function __construct(Hashids $hashids)
@@ -21,7 +21,7 @@ class IncomeRepository
 
     public function store($request)
     {
-        $validType = IncomeExpend::TYPE['income'];
+        $validType = IncomeExpend::TYPE['expend'];
         $request->validate([
             'category_id' => 'required',
             'wallet_id' => 'required',
@@ -35,7 +35,7 @@ class IncomeRepository
 
         $wallet = Wallet::findOrFail($walletId);
 
-        $income = IncomeExpend::create([
+        $expend = IncomeExpend::create([
             'category_id' => $categoryId,
             'wallet_id' => $walletId,
             'description' => $request->description,
@@ -43,8 +43,10 @@ class IncomeRepository
             'type' => $request->type
         ]);
 
-        $wallet->amount+= $income->amount;
-        $wallet->save();
+        // dd($expend);
+
+        // $wallet->amount-= $expend->amount;
+        // $wallet->save();
         return response(['message' => 'success']);
     }
 }

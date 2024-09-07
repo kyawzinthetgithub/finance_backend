@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
+use App\Http\Controllers\Api\ExpendController;
 use App\Http\Controllers\Api\IncomeController;
 use App\Http\Controllers\Api\Wallet\WalletController;
 use App\Http\Controllers\Api\WalletType\WalletTypeController;
@@ -41,6 +42,12 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
 
     //income
     Route::group(['prefix' => 'income','controller' => IncomeController::class],function(){
+        Route::post('/create','store');
+    });
+
+
+    //expend
+    Route::group(['prefix' => 'expend','controller' => ExpendController::class],function(){
         Route::post('/create','store');
     });
 });
