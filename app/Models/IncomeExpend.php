@@ -22,6 +22,36 @@ class IncomeExpend extends Model
         'expend' => 'expend'
     ];
 
+    public function store($data)
+    {
+        $validType = $data->type == 'income' ? self::TYPE['income'] : self::TYPE['expend'];
+        $data->validate([
+            'category_id' => 'required',
+            'wallet_id' => 'required',
+            'description' => 'required',
+            'amount' => 'required',
+            'type' => "required|in:{$validType}"
+        ]);
+
+        $categoryId = byHash($data->category_id);
+        $walletId = byHash($data->wallet_id);
+        $wallet = Wallet::findOrFail($walletId);
+
+        self::create([
+            'category_id' => $categoryId,
+            'wallet_id' => $walletId,
+            'description' => $data->description,
+            'amount' => $data->amount,
+            'type' => $validType
+        ]);
+
+        $validType == 'income' ? $wallet->amount += $data->amount : $wallet->amount -= $data->amount;
+        $wallet->save();
+        return response(['message' => 'success']);
+
+
+    }
+
     //relation with wallet and income_expend
     public function wallet()
     {

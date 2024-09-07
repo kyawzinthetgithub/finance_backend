@@ -15,9 +15,8 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $hashids = new Hashids(config('hashids.connections.main.salt'), config('hashids.connections.main.length'));
         return [
-            'id' => $this->id ? $hashids->encode($this->id) : '-',
+            'id' => $this->id ? makeHash($this->id) : '-',
             'name' => $this->name ?? '-',
             'email' => $this->email ?? '-',
             'image' => $this->image ?? '-',

@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('wallet_transfer_logs', function (Blueprint $table) {
             $table->id('id');
-            $table->foreignId('from_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->nullabel(false);
-            $table->foreignId('to_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->nullabel(false);
-            $table->string('description')->nullable(false)->default('text');
-            $table->integer('amount')->nullable(false);
+            $table->foreignId('from_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
+            $table->foreignId('to_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
+            $table->string('description')->default('text');
+            $table->integer('amount');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -21,9 +21,8 @@ class UserWalletResource extends JsonResource
     {
         $user = User::findOrFail($this->user_id);
         $wallet_type = WalletType::findOrFail($this->wallet_type_id);
-        $hashids = new Hashids(config('hashids.connections.main.salt'), config('hashids.connections.main.length'));
         return [
-            'id' => $this->id ? $hashids->encode($this->id) : '-',
+            'id' => $this->id ? makeHash($this->id) : '-',
             'user' => $this->user_id ? UserResource::make($user) : '-',
             'wallet_type' => $this->wallet_type_id ? WalletTypeResource::make($wallet_type) : '-',
             'name' => $this->name ?? '-',

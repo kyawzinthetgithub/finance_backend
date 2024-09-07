@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('income_expends', function (Blueprint $table) {
             $table->id('id');
-            $table->foreignId('category_id')->references('id')->on('wallet_types')->cascadeOnDelete()->nullabel(false);
-            $table->foreignId('wallet_id')->references('id')->on('wallet_types')->cascadeOnDelete()->nullabel(false);
-            $table->string('description')->nullable(false);
-            $table->integer('amount')->nullable(false);
-            $table->enum('type',['income','expend'])->nullable(false);
+            $table->foreignId('category_id')->references('id')->on('categories')->cascadeOnDelete()->constrained();
+            $table->foreignId('wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
+            $table->string('description');
+            $table->integer('amount');
+            $table->enum('type',['income','expend']);
             $table->softDeletes();
             $table->timestamps();
         });

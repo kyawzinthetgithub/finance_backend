@@ -17,9 +17,8 @@ class CategoryResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        $hashids = new HashIds(config('hashids.connections.main.salt'),config('hashids.connections.main.length'));
         return [
-            'id' => $this->id?$hashids->encode($this->id):'-',
+            'id' => $this->id?makeHash($this->id):'-',
             'name' => $this->name,
             'type' => $this->type
         ];

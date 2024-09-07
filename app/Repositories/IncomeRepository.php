@@ -21,30 +21,7 @@ class IncomeRepository
 
     public function store($request)
     {
-        $validType = IncomeExpend::TYPE['income'];
-        $request->validate([
-            'category_id' => 'required',
-            'wallet_id' => 'required',
-            'description' => 'required',
-            'amount' => 'required',
-            'type' => "required|in:{$validType}"
-        ]);
-
-        $categoryId = $this->byHash($request->category_id);
-        $walletId = $this->byHash($request->wallet_id);
-
-        $wallet = Wallet::findOrFail($walletId);
-
-        $income = IncomeExpend::create([
-            'category_id' => $categoryId,
-            'wallet_id' => $walletId,
-            'description' => $request->description,
-            'amount' => $request->amount,
-            'type' => $request->type
-        ]);
-
-        $wallet->amount+= $income->amount;
-        $wallet->save();
-        return response(['message' => 'success']);
+        $income = (new IncomeExpend())->store($request);
+        return $income;
     }
 }
