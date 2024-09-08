@@ -22,14 +22,18 @@ class AuthController extends Controller
     {
         $user = User::where('email', $request->email)->latest()->first();
         abort_if($user, 442, 'You already registered');
-        $response = $this->repo->store($request);
+        $res = $this->repo->store($request);
+        $response = [
+            'user' => new UserResource($res['user']),
+            'token' => $res['token']
+        ];
         return $response;
     }
 
     public function login(Request $request)
     {
-        $response = $this->repo->login($request);
-        return $response;
+        $res = $this->repo->login($request);
+        return $res;
     }
 
     public function logout(Request $request) {

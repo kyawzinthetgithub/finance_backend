@@ -20,13 +20,17 @@ class WalletController extends Controller
     public function store(Request $request)
     {
         $this->repo->store($request);
-        return response(['data' => 'success'],200);
+        return response(['data' => 'success'], 200);
     }
 
     public function UserWallet(Request $request)
     {
         $res = $this->repo->UserWallet($request);
-        return UserWalletCollection::make($res);
+        $response = [
+            'user_wallet' => UserWalletCollection::make($res['user_wallet']),
+            'total_amount' => $res['total_amount']
+        ];
+        return $response;
     }
 
     public function destory($id)

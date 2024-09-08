@@ -3,15 +3,28 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\User\UserResource;
 
 class UserRepository
 {
+    protected $hashids;
+    public function __construct(Hashids $hashids)
+    {
+        $this->hashids = $hashids;
+    }
+
+    public function byHash($id)
+    {
+        return $this->hashids->decode($id)[0];
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
+        $data = $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users|email',
             'password' => 'required|confirmed|min:6|max:12',
@@ -54,7 +67,7 @@ class UserRepository
         } else {
             $token = $user->createToken($user->name);
             return [
-                'user' => $user,
+                'user' => new UserResource($user),
                 'token' => $token->plainTextToken
             ];
         }
@@ -70,13 +83,13 @@ class UserRepository
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($this->byHash($id));
         return $user;
     }
 
     public function update($request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($this->byHash($id));
         $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users|email',
@@ -108,7 +121,7 @@ class UserRepository
 
     public function changePassword($request, $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::findOrFail($this->byHash($id));
         $request->validate([
             'old_password' => 'required|min:6|max:12',
             'new_password' => 'required|min:6|max:12',

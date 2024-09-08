@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wallet_transfer_logs', function (Blueprint $table) {
+        Schema::create('income_expends', function (Blueprint $table) {
             $table->id('id');
-            $table->foreignId('from_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
-            $table->foreignId('to_wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
-            $table->string('description')->default('text');
+            $table->foreignId('category_id')->references('id')->on('categories')->cascadeOnDelete()->constrained();
+            $table->foreignId('wallet_id')->references('id')->on('wallets')->cascadeOnDelete()->constrained();
+            $table->string('description');
             $table->integer('amount');
+            $table->enum('type',['income','expend']);
             $table->softDeletes();
             $table->timestamps();
         });
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wallet_transfer_logs');
+        Schema::dropIfExists('income_expends');
     }
 };
