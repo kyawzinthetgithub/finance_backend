@@ -2,6 +2,9 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\IncomeExpend\IncomeExpendCollection;
+use App\Http\Resources\IncomeExpend\IncomeExpendResource;
+use App\Http\Resources\Wallet\UserWalletResource;
 use App\Models\User;
 use App\Models\Wallet;
 use Hashids\Hashids;
@@ -80,5 +83,15 @@ class WalletRepository
         $wallet->deleted_at = null;
         $wallet->save();
         return response(['message' => 'restore success'],200);
+    }
+
+    public function AccountDetail($id)
+    {
+        $wallet = Wallet::findOrFail(byHash($id));
+        $detail = $wallet->income_expends()->get();
+        return response([
+            'wallet' => UserWalletResource::make($wallet),
+            'detail' => IncomeExpendCollection::make($detail),
+        ]);
     }
 }
