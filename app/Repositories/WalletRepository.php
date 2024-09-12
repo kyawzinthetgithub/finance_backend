@@ -2,14 +2,17 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\IncomeExpend\IncomeExpendCollection;
-use App\Http\Resources\IncomeExpend\IncomeExpendResource;
-use App\Http\Resources\Wallet\UserWalletResource;
 use App\Models\User;
-use App\Models\Wallet;
 use Hashids\Hashids;
+use App\Models\Wallet;
+use App\Models\IncomeExpend;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Wallet\UserWalletResource;
+use App\Http\Resources\IncomeExpend\IncomeExpendResource;
+use App\Http\Resources\IncomeExpend\IncomeExpendCollection;
+use App\Models\Category;
 use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class WalletRepository
@@ -35,7 +38,7 @@ class WalletRepository
         ]);
 
         $user = Auth::user();
-        abort_if(!$user,'401','User not found');
+        abort_if(!$user, '401', 'User not found');
         $wallet = Wallet::create([
             'user_id' => $user->id,
             'wallet_type_id' => $wallet_type_id,
@@ -50,7 +53,7 @@ class WalletRepository
     {
         $auth_user_id = $this->byHash($request->auth_user);
         $user = User::findOrFail($auth_user_id);
-        abort_if($auth_user_id != $user->id,401,'User Not Found');
+        abort_if($auth_user_id != $user->id, 401, 'User Not Found');
         $user_wallet = $user->wallets()->get();
         $total_amount = $user_wallet->sum('amount');
         $data = [
@@ -64,34 +67,43 @@ class WalletRepository
     {
         $wallet_id = $this->byHash($id);
         $wallet = Wallet::findOrFail($wallet_id);
-        abort_if(!$wallet,404,'Wallet not found');
+        abort_if(!$wallet, 404, 'Wallet not found');
         $wallet->delete();
-        return response(['message' => 'success'],200);
+        return response(['message' => 'success'], 200);
     }
 
     public function getDeleteWallet($request)
     {
-        $wallet = Wallet::where('user_id',$this->byHash($request->user_id))->withTrashed()->where('deleted_at','!=',null)->get();
-        abort_if(!$wallet,422,'Wallet not found');
+        $wallet = Wallet::where('user_id', $this->byHash($request->user_id))->withTrashed()->where('deleted_at', '!=', null)->get();
+        abort_if(!$wallet, 422, 'Wallet not found');
         return $wallet;
     }
 
     public function restoreWallet($request)
     {
-        $wallet = Wallet::where('user_id',$this->byHash($request->user_id))->where('id',$this->byHash($request->wallet_id))->withTrashed()->latest()->first();
-        abort_if(!$wallet,422,'Wallet not found');
+        $wallet = Wallet::where('user_id', $this->byHash($request->user_id))->where('id', $this->byHash($request->wallet_id))->withTrashed()->latest()->first();
+        abort_if(!$wallet, 422, 'Wallet not found');
         $wallet->deleted_at = null;
         $wallet->save();
-        return response(['message' => 'restore success'],200);
+        return response(['message' => 'restore success'], 200);
     }
 
-    public function AccountDetail($id)
+    public function AccountDetail($request, $id)
     {
-        $wallet = Wallet::findOrFail(byHash($id));
-        $detail = $wallet->income_expends()->get();
-        return response([
-            'wallet' => UserWalletResource::make($wallet),
-            'detail' => IncomeExpendCollection::make($detail),
-        ]);
+        $per_page = $request->per_page;
+        $detail = IncomeExpend::where('wallet_id', byHash($id))->orderBy('created_at', 'desc')->paginate($per_page);
+        $data = $detail->getCollection()->map(function ($item) {
+            return [
+                'id' => $item->id ? makeHash($item->id) : null,
+                'category' => $item->category_id ? CategoryResource::make(Category::where('id', $item->category_id)->first()) : null,
+                'description' => $this->description ?? '-',
+                'amount' => $item->amount ?? '-',
+                'type' => $item->type ?? '-',
+                'created_at' => $item->created_at?->format('d-m-Y h:m:s a') ?? '-',
+                'deleted_at' => $item->deleted_at?->format('d-m-Y h:m:s a') ?? '-'
+            ];
+        });
+        $detail->setCollection($data);
+        return $detail;
     }
 }

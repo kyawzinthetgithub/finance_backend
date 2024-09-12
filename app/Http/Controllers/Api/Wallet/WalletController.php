@@ -49,8 +49,8 @@ class WalletController extends Controller
         return $this->repo->restoreWallet($request);
     }
 
-    public function AccountDetail($id)
+    public function AccountDetail(Request $request,$id)
     {
-        return $this->repo->AccountDetail($id);
+        return $this->repo->AccountDetail($request,$id);
     }
 }
