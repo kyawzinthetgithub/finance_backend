@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class IncomeExpend extends Model
 {
@@ -56,5 +57,12 @@ class IncomeExpend extends Model
     public function wallet()
     {
         return $this->belongsTo(Wallet::class);
+    }
+
+     // Scope for filtering by specific day
+    public function scopeForDay($query, $date)
+    {
+        $parsedDate = Carbon::parse($date);
+        return $query->whereDate('created_at', $parsedDate->format('Y-m-d'));
     }
 }

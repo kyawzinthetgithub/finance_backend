@@ -5,14 +5,16 @@ namespace App\Repositories;
 use App\Models\User;
 use Hashids\Hashids;
 use App\Models\Wallet;
+use App\Models\Category;
 use App\Models\IncomeExpend;
 use Illuminate\Http\Request;
+use App\Models\WalletTransferLog;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Wallet\UserWalletResource;
 use App\Http\Resources\IncomeExpend\IncomeExpendResource;
 use App\Http\Resources\IncomeExpend\IncomeExpendCollection;
-use App\Models\Category;
 use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class WalletRepository
@@ -92,18 +94,44 @@ class WalletRepository
     {
         $per_page = $request->per_page;
         $detail = IncomeExpend::where('wallet_id', byHash($id))->orderBy('created_at', 'desc')->paginate($per_page);
-        $data = $detail->getCollection()->map(function ($item) {
-            return [
-                'id' => $item->id ? makeHash($item->id) : null,
-                'category' => $item->category_id ? CategoryResource::make(Category::where('id', $item->category_id)->first()) : null,
-                'description' => $this->description ?? '-',
-                'amount' => $item->amount ?? '-',
-                'type' => $item->type ?? '-',
-                'created_at' => $item->created_at?->format('d-m-Y h:m:s a') ?? '-',
-                'deleted_at' => $item->deleted_at?->format('d-m-Y h:m:s a') ?? '-'
-            ];
-        });
-        $detail->setCollection($data);
-        return $detail;
+        return new IncomeExpendCollection($detail);
+    }
+
+    public function transfer($request)
+    {
+        $request->validate([
+            "amount" => "required",
+            "from_wallet_id" => "required",
+            "to_wallet_id" => "required",
+            "description" => "required"
+        ]);
+        $fromWalletId = byHash($request->from_wallet_id);
+        $toWalletId = byHash($request->to_wallet_id);
+        $amount = $request->amount;
+        $description = $request->description;
+
+        DB::beginTransaction();
+
+        try {
+            $fromWallet = Wallet::findOrFail($fromWalletId);
+            $toWallet = Wallet::findOrFail($toWalletId);
+
+            // ပို့မယ့်ကောင်ထပ် amount ကမများအောင်စစ်ထားတာ
+            if ($fromWallet->amount < $amount) {
+                return response(['message' => 'စောက်ဆံမလောက်ဘူး'], 400);
+            }
+
+            //make transfer in wallettransferlog model
+            (new WalletTransferLog())->makeTransfer($fromWallet, $toWallet, $amount, $description);
+
+            // Commit the transaction
+            DB::commit();
+
+            return response(['message' => 'success']);
+        } catch (\Exception $e) {
+            // Rollback the transaction on failure
+            DB::rollBack();
+            return response(['message' => 'Transfer failed', 'error' => $e->getMessage()], 500);
+        }
     }
 }

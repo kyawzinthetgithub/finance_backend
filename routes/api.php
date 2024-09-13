@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
         Route::delete('/delete/{walletId}','destory');
         Route::get('/restore','getDeleteWallet');
         Route::post('/restore','restoreWallet');
+        Route::post('/transfer','transfer');
 
         //get wallet detail with income and expend
         Route::get('/detail/{id}','AccountDetail');

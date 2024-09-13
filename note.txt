@@ -1,0 +1,67 @@
+for model start here
+use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
+
+class YourModel extends Model
+{
+    // Scope for filtering by specific day
+    public function scopeForDay($query, $date)
+    {
+        $parsedDate = Carbon::parse($date);
+        return $query->whereDate('created_at', $parsedDate->format('Y-m-d'));
+    }
+
+    // Scope for filtering by specific month
+    public function scopeForMonth($query, $year, $month)
+    {
+        $startOfMonth = Carbon::create($year, $month, 1)->startOfMonth();
+        $endOfMonth = Carbon::create($year, $month, 1)->endOfMonth();
+        return $query->whereBetween('created_at', [$startOfMonth, $endOfMonth]);
+    }
+
+    // Scope for filtering by specific year
+    public function scopeForYear($query, $year)
+    {
+        $startOfYear = Carbon::create($year, 1, 1)->startOfYear();
+        $endOfYear = Carbon::create($year, 12, 31)->endOfYear();
+        return $query->whereBetween('created_at', [$startOfYear, $endOfYear]);
+    }
+}
+model end here
+
+controller start here
+
+public function filterData(Request $request)
+{
+    $filterType = $request->input('filter_type'); // 'day', 'month', 'year'
+    $query = YourModel::query(); // Start with a base query
+
+    switch ($filterType) {
+        case 'day':
+            $date = $request->input('date'); // Expected format: YYYY-MM-DD
+            $query->forDay($date);
+            break;
+
+        case 'month':
+            $year = $request->input('year'); // Expected format: YYYY
+            $month = $request->input('month'); // Expected format: MM
+            $query->forMonth($year, $month);
+            break;
+
+        case 'year':
+            $year = $request->input('year'); // Expected format: YYYY
+            $query->forYear($year);
+            break;
+
+        default:
+            // Handle other cases or provide an error response
+            break;
+    }
+
+    $data = $query->get();
+
+    return view('your-view', compact('data'));
+}
+
+
+controller end here

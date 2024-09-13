@@ -53,4 +53,9 @@ class WalletController extends Controller
     {
         return $this->repo->AccountDetail($request,$id);
     }
+
+    public function transfer(Request $request)
+    {
+        return $this->repo->transfer($request);
+    }
 }

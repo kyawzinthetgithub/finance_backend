@@ -27,4 +27,19 @@ class WalletTransferLog extends Model
     {
         $this->belongsTo(Wallet::class);
     }
+
+    public function makeTransfer($fromWallet, $toWallet, $amount, $description)
+    {
+        // Log the transfer
+        self::create([
+            "amount" => $amount,
+            "from_wallet_id" => $fromWallet->id,
+            "to_wallet_id" => $toWallet->id,
+            "description" => $description
+        ]);
+
+        // Update wallet balances
+        $fromWallet->decrement('amount', $amount);
+        $toWallet->increment('amount', $amount);
+    }
 }
