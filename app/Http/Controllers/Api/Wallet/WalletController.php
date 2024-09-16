@@ -19,8 +19,11 @@ class WalletController extends Controller
 
     public function store(Request $request)
     {
-        $this->repo->store($request);
-        return response(['data' => 'success'], 200);
+        $data = $this->repo->store($request);
+        if ($data) {
+            $message = "Wallet Created Successfully!";
+            return json_response(200, $message, $data);
+        }
     }
 
     public function UserWallet(Request $request)
@@ -49,9 +52,9 @@ class WalletController extends Controller
         return $this->repo->restoreWallet($request);
     }
 
-    public function AccountDetail(Request $request,$id)
+    public function AccountDetail(Request $request, $id)
     {
-        return $this->repo->AccountDetail($request,$id);
+        return $this->repo->AccountDetail($request, $id);
     }
 
     public function transfer(Request $request)
