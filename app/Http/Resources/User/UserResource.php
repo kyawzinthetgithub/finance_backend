@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'id' => $this->id ? makeHash($this->id) : '-',
             'name' => $this->name ?? '-',
             'email' => $this->email ?? '-',
-            'image' => $this->image ?? '-',
+            'image' => $this->image ?? null,
             'created_at' => $this->created_at ? $this->created_at->format('d-m-Y h:ma') : '-'
         ];
     }
