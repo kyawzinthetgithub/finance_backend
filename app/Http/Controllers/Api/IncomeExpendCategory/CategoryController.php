@@ -20,4 +20,9 @@ class CategoryController extends Controller
         $res = $this->repo->getAll($request);
         return new CategoryCollection($res);
     }
+
+    public function store(Request $request)
+    {
+        $res = $this->repo->store($request);
+    }
 }

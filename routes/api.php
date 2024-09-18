@@ -29,6 +29,7 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
     //category (income_category and expend_category)
     Route::group(['controller' => CategoryController::class,'prefix' => 'category'],function(){
         Route::get('/','index');
+        Route::post('/store', 'store');
     });
 
     //wallet

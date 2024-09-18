@@ -15,4 +15,14 @@ class CategoryRepository
         $category = $this->model()->getWithType($request->type);
         return $category;
     }
+
+    public function store($request)
+    {
+        $data = $this->createPayload($request);
+    }
+
+    protected function createPayload($request)
+    {
+        info($request);
+    }
 }
