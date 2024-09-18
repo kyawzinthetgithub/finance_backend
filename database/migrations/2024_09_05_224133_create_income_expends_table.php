@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('description');
             $table->integer('amount');
             $table->enum('type',['income','expend']);
+            $table->timestamp('action_date')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
