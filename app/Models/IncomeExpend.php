@@ -15,7 +15,8 @@ class IncomeExpend extends Model
         'wallet_id',
         'description',
         'amount',
-        'type'
+        'type',
+        'action_date'
     ];
 
     const TYPE = [
@@ -43,7 +44,8 @@ class IncomeExpend extends Model
             'wallet_id' => $walletId,
             'description' => $data->description,
             'amount' => $data->amount,
-            'type' => $validType
+            'type' => $validType,
+            'action_date' => $data->action_date ? Carbon::createFromFormat('Y-m-d',$data->action_date) : null
         ]);
 
         $validType == 'income' ? $wallet->amount += $data->amount : $wallet->amount -= $data->amount;
