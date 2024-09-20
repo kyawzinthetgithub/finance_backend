@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id('id');
             $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade')->constrained();
             $table->foreignId('wallet_type_id')->references('id')->on('wallet_types')->onDelete('cascade')->constrained();
+            $table->foreignId('image_id')->nullable()->references('id')->on('images')->onDelete('cascade')->constrained();
             $table->string('name');
             $table->string('bank_name')->nullable();
             $table->integer('amount')->default(0);

@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Models\User;
 use Hashids\Hashids;
+use App\Models\Image;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
@@ -12,9 +14,12 @@ use App\Http\Resources\User\UserResource;
 class UserRepository
 {
     protected $hashids;
-    public function __construct(Hashids $hashids)
+    protected $cloudinary;
+
+    public function __construct(Hashids $hashids, CloudinaryService $cloudinaryService)
     {
         $this->hashids = $hashids;
+        $this->cloudinary = $cloudinaryService;
     }
 
     public function byHash($id)
@@ -24,23 +29,24 @@ class UserRepository
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users|email',
             'password' => 'required|confirmed|min:6|max:12',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:1024',
         ]);
 
+        $image = null;
+
         if ($request->hasFile('image')) {
-            $profile = uniqid() . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/profile/', $profile);
+            $image = $this->cloudinary->upload($request->file('image'));
         }
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'image' => $profile
+            'image' => $image && $request->image ? $image->id : null
         ]);
 
         $token = $user->createToken($request->name);
@@ -90,31 +96,31 @@ class UserRepository
     public function update($request, $id)
     {
         $user = User::findOrFail($this->byHash($id));
+        $userImage = Image::where('id',$user->image)->latest()->first();
         $request->validate([
             'name' => 'required',
             'email' => 'required|unique:users|email',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
+        $image = null;
+
         if ($request->hasFile('image')) {
-            $userImg = $user->image;
-            if ($userImg) {
-                $filePath = storage_path('app/public/profile/' . $userImg);
-                if (File::exists($filePath)) {
-                    File::delete($filePath);
-                } else {
-                    return ['message' => 'File Not Found'];
-                }
+            if ($userImage) {
+                $image = $this->cloudinary->update($userImage,$request->file('image'));
             }
-            $profile = uniqid() . $request->file('image')->getClientOriginalName();
-            $request->file('image')->storeAs('public/profile/', $profile);
         }
 
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'image' => $profile
-        ]);
+        // $user->update([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'image' => $image && $request->file('image') ? $image->image_url : null
+        // ]);
+
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->image = $image && $request->file('image') ? $image->id : null;
+        $user->save();
 
         return $user;
     }

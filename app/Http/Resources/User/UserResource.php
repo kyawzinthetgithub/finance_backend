@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Models\Image;
 use Hashids\Hashids;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -19,7 +20,7 @@ class UserResource extends JsonResource
             'id' => $this->id ? makeHash($this->id) : '-',
             'name' => $this->name ?? '-',
             'email' => $this->email ?? '-',
-            'image' => $this->image ?? null,
+            'image' => $this->image ? Image::findOrFail($this->image)->image_url : null,
             'created_at' => $this->created_at ? $this->created_at->format('d-m-Y h:ma') : '-'
         ];
     }
