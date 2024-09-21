@@ -2,13 +2,14 @@
 
 namespace App\Http\Resources\Wallet;
 
-use App\Http\Resources\User\UserResource;
-use App\Http\Resources\WalletType\WalletTypeResource;
 use App\Models\User;
-use App\Models\WalletType;
 use Hashids\Hashids;
+use App\Models\Image;
+use App\Models\WalletType;
 use Illuminate\Http\Request;
+use App\Http\Resources\User\UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\WalletType\WalletTypeResource;
 
 class UserWalletResource extends JsonResource
 {
@@ -28,7 +29,7 @@ class UserWalletResource extends JsonResource
             'name' => $this->name ?? '-',
             'bank_name' => $this->bank_name ?? '-',
             'amount' => $this->amount ?? '0',
-            // 'total_ammount' => $this->amount?$this->amount->sum('')
+            'image' => $this->image ? Image::where('id',$this->image)->latest()->first()->image_url : null,
             'created_at' => $this->created_at?->format('d-m-Y h:m:s a') ?? '-',
             'deleted_at' => $this->deleted_at?->format('d-m-Y h:m:s a') ?? '-'
         ];

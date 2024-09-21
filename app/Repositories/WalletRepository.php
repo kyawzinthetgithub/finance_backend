@@ -15,14 +15,17 @@ use App\Http\Resources\Category\CategoryResource;
 use App\Http\Resources\Wallet\UserWalletResource;
 use App\Http\Resources\IncomeExpend\IncomeExpendResource;
 use App\Http\Resources\IncomeExpend\IncomeExpendCollection;
+use App\Services\CloudinaryService;
 use Symfony\Component\HttpFoundation\Test\Constraint\ResponseIsSuccessful;
 
 class WalletRepository
 {
     protected $hashids;
-    public function __construct(Hashids $hashids)
+    protected $cloudinary;
+    public function __construct(Hashids $hashids, CloudinaryService $cloudinaryService)
     {
         $this->hashids = $hashids;
+        $this->cloudinary = $cloudinaryService;
     }
 
     public function byHash($id)
@@ -42,14 +45,21 @@ class WalletRepository
 
         $user = Auth::user();
         abort_if(!$user, '401', 'User not found');
+
+        $image = null;
+        if($request->hasFile('image')){
+            $image = $this->cloudinary->upload($request->file('image'));
+        }
+
         $wallet = Wallet::create([
             'user_id' => $user->id,
             'wallet_type_id' => $wallet_type_id,
             'name' => $request->name,
             'bank_name' => $request->bank_name,
-            'amount' => $request->amount
+            'amount' => $request->amount,
+            'image' => $request->hasFile('image') && $image ? $image->id : null
         ]);
-        return $wallet;
+        return UserWalletResource::make($wallet);
     }
 
     public function UserWallet($request)
