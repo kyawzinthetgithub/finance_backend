@@ -33,7 +33,7 @@ class UserRepository
             'name' => 'required',
             'email' => 'required|unique:users|email',
             'password' => 'required|confirmed|min:6|max:12',
-            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:1024',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $image = null;
@@ -99,7 +99,6 @@ class UserRepository
         $userImage = Image::where('id',$user->image)->latest()->first();
         $request->validate([
             'name' => 'required',
-            'email' => 'required|unique:users|email',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
@@ -108,18 +107,13 @@ class UserRepository
         if ($request->hasFile('image')) {
             if ($userImage) {
                 $image = $this->cloudinary->update($userImage,$request->file('image'));
+            }else{
+                $image = $this->cloudinary->upload($request->file('image'));
             }
         }
-
-        // $user->update([
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'image' => $image && $request->file('image') ? $image->image_url : null
-        // ]);
-
         $user->name = $request->name;
-        $user->email = $request->email;
-        $user->image = $image && $request->file('image') ? $image->id : null;
+        $user->email = $request->email??$user->email;
+        $user->image = $image && $request->file('image') ? $image->id : $user->image;
         $user->save();
 
         return $user;

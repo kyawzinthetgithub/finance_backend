@@ -24,5 +24,6 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $res = $this->repo->store($request);
+        return $res;
     }
 }

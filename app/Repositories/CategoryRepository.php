@@ -3,9 +3,17 @@
 namespace App\Repositories;
 
 use App\Models\Category;
+use App\Services\CloudinaryService;
 
 class CategoryRepository
 {
+
+    protected $cloudinary;
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinary = $cloudinaryService;
+    }
+
     protected function model()
     {
         return new Category();
@@ -26,15 +34,15 @@ class CategoryRepository
 
     protected function createPayload($request)
     {
-        $icon = $request->icon;
-        info($icon);
         $data = [
             'name' => $request->name,
             'type' => $request->type
         ];
-        $imagename = time().'.' . $icon->extension();
-        $icon->move(public_path('images/category'), $imagename);
-        $data['icon'] = 'images/item/' . $imagename;
+        $icon = null;
+        if($request->hasFile('icon')){
+            $icon = $this->cloudinary->upload($request->file('icon'));
+            $data['icon'] = $icon->id;
+        }
         return $data;
     }
 }

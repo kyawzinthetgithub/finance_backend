@@ -37,6 +37,7 @@ class WalletRepository
             'name' => 'required',
             'wallet_type_id' => 'required',
             'amount' => 'required|integer',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $user = Auth::user();

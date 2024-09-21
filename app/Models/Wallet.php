@@ -14,7 +14,7 @@ class Wallet extends Model
     use HasFactory,SoftDeletes;
 
     protected $fillable = [
-        'user_id','wallet_type_id','name','bank_name','amount'
+        'user_id','wallet_type_id','name','bank_name','amount','image'
     ];
 
     //relation with wallet type and wallet

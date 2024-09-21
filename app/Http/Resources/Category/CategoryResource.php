@@ -3,9 +3,10 @@
 namespace App\Http\Resources\Category;
 
 use Hashids\Hashids;
+use App\Models\Image;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use phpDocumentor\Reflection\Types\This;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class CategoryResource extends JsonResource
 {
@@ -20,7 +21,8 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id?makeHash($this->id):'-',
             'name' => $this->name,
-            'type' => $this->type
+            'type' => $this->type,
+            'icon' => $this->icon ? Image::where('id',$this->icon)->latest()->first()->image_url : null
         ];
     }
 }
