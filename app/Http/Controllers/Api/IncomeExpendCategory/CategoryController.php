@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\IncomeExpendCategory;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Category\CategoryCollection;
 use App\Repositories\CategoryRepository;
-use Illuminate\Http\Request;
+use Illuminate\Http\Request; 
 
 class CategoryController extends Controller
 {
@@ -18,7 +18,13 @@ class CategoryController extends Controller
     public function index(Request $request)
     {
         $res = $this->repo->getAll($request);
-        return new CategoryCollection($res);
+
+        if($res) {
+            $data = new CategoryCollection($res);
+            $message = "Category Retrived Successfully";
+
+            return json_response(200, $message, $data);
+        }
     }
 
     public function store(Request $request)

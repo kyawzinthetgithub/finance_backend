@@ -29,7 +29,7 @@ class CategoryRepository
         $data = $this->createPayload($request);
         $category = $this->model()->create($data);
         $message = "Category Created Successfully";
-        return json_response(200,$message, $category);
+        return json_response(201,$message, $category);
     }
 
     protected function createPayload($request)
