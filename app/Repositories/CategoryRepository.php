@@ -20,7 +20,12 @@ class CategoryRepository
     }
     public function getAll($request)
     {
-        $category = $this->model()->getWithType($request->type);
+        $category = $this->model()
+            ->query()
+            ->when($request->input('type'), function($query, $type){
+                $query->getWithType($type);
+            })
+            ->get();
         return $category;
     }
 

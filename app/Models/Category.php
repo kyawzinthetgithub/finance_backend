@@ -22,6 +22,6 @@ class Category extends Model
 
     public function getWithType($type)
     {
-        return $this->whereIn('type', self::CATEGORY_TYPE)->where('type', $type)->get();
+        return $this->whereIn('type', self::CATEGORY_TYPE)->where('type', $type);
     }
 }
