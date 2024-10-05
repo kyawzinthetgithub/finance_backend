@@ -64,7 +64,8 @@ class WalletRepository
 
     public function UserWallet($request)
     {
-        $auth_user_id = $this->byHash($request->auth_user);
+        // $auth_user_id = $this->byHash($request->auth_user);
+        $auth_user_id = Auth::user()->id;
         $user = User::findOrFail($auth_user_id);
         abort_if($auth_user_id != $user->id, 401, 'User Not Found');
         $user_wallet = $user->wallets()->get();
