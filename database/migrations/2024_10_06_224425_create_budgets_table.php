@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('budgets', function (Blueprint $table) {
             $table->id('id');
-            $table->string('name');
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade')->constrained();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade')->constrained();
             $table->integer('total');
             $table->integer('spend_amound')->nullable();
-            $table->dateTime('expired_at')->nullable();
+            $table->integer('remaining_amount')->nullable();
             $table->boolean('alert')->default(0)->nullable();
             $table->integer('usage')->default(0);
-            $table->integer('remaining_amount')->nullable();
+            $table->dateTime('expired_at')->nullable();
             $table->timestamps();
         });
     }

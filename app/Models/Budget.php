@@ -13,18 +13,20 @@ class Budget extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
         'category_id',
         'user_id',
         'total',
         'spend_amount',
-        'remaining_amount'
+        'remaining_amount',
+        'alert',
+        'usage',
+        'expired_at'
     ];
 
     protected function casts(): array
     {
         return [
-            'name' => 'string'
+            'expired_at' => 'datetime'
         ];
     }
 
