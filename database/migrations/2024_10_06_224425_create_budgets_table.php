@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('spend_amound')->nullable();
             $table->dateTime('expired_at')->nullable();
             $table->boolean('alert')->default(0)->nullable();
+            $table->integer('usage')->default(0);
             $table->integer('remaining_amount')->nullable();
             $table->timestamps();
         });
