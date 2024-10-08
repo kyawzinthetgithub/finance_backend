@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Budget;
 use App\Models\Wallet;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
@@ -52,5 +53,10 @@ class User extends Authenticatable
     public function wallets()
     {
         return $this->hasMany(Wallet::class);
+    }
+
+    public function budgets()
+    {
+        return $this->hasMany(Budget::class);
     }
 }

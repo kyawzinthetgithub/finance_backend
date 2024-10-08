@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use App\Models\Wallet;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +15,7 @@ class Budget extends Model
     protected $fillable = [
         'name',
         'category_id',
-        'wallet_id',
+        'user_id',
         'total',
         'spend_amount',
         'remaining_amount'
@@ -27,10 +28,9 @@ class Budget extends Model
         ];
     }
 
-    //relation with wallet
-    public function wallets()
+    public function user()
     {
-        return $this->hasMany(Wallet::class);
+        return $this->belongsTo(User::class);
     }
 
     public function category()
