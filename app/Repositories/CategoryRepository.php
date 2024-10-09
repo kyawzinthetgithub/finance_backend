@@ -23,7 +23,7 @@ class CategoryRepository
         $category = $this->model()
             ->query()
             ->when($request->input('type'), function($query, $type){
-                $query->getWithType($type);
+                $query->where('type', $type);
             })
             ->get();
         return $category;
