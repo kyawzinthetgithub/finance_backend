@@ -5,6 +5,7 @@ use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\ExpendController;
+use App\Http\Controllers\Api\HomePageController;
 use App\Http\Controllers\Api\IncomeController;
 use App\Http\Controllers\Api\Wallet\WalletController;
 use App\Http\Controllers\Api\WalletType\WalletTypeController;
@@ -55,4 +56,7 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
     Route::group(['prefix' => 'expend','controller' => ExpendController::class],function(){
         Route::post('/create','store');
     });
+
+    // for home page
+    Route::get('/income-expend',[HomePageController::class, 'index']);
 });
