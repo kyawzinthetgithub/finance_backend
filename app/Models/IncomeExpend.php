@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 
 class IncomeExpend extends Model
 {
@@ -13,10 +14,15 @@ class IncomeExpend extends Model
     protected $fillable = [
         'category_id',
         'wallet_id',
+        'user_id',
         'description',
         'amount',
         'type',
         'action_date'
+    ];
+
+    protected $casts = [
+        'action_date' => 'datetime'
     ];
 
     const TYPE = [
@@ -38,14 +44,16 @@ class IncomeExpend extends Model
         $categoryId = byHash($data->category_id);
         $walletId = byHash($data->wallet_id);
         $wallet = Wallet::findOrFail($walletId);
+        $user = Auth::user();
 
         self::create([
             'category_id' => $categoryId,
             'wallet_id' => $walletId,
+            'user_id' => $user->id,
             'description' => $data->description,
             'amount' => $data->amount,
             'type' => $validType,
-            'action_date' => $data->action_date ? Carbon::createFromFormat('Y-m-d',$data->action_date) : null
+            'action_date' => $data->action_date ? Carbon::parse($data->action_date) : null
         ]);
 
         $validType == 'income' ? $wallet->amount += $data->amount : $wallet->amount -= $data->amount;
@@ -59,6 +67,11 @@ class IncomeExpend extends Model
     public function wallet()
     {
         return $this->belongsTo(Wallet::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
      // Scope for filtering by specific day
