@@ -22,6 +22,8 @@ class WalletRepository
 {
     protected $hashids;
     protected $cloudinary;
+    public const DEPOSITE = 'deposite';
+
     public function __construct(Hashids $hashids, CloudinaryService $cloudinaryService)
     {
         $this->hashids = $hashids;
@@ -59,6 +61,26 @@ class WalletRepository
             'amount' => $request->amount,
             'image' => $request->hasFile('image') && $image ? $image->id : null
         ]);
+
+        // income transaction for wallet creation
+        $category = Category::where('name', self::DEPOSITE)->first();
+        if(!$category){
+            $category = Category::create([
+                'name' => 'Deposite',
+                'type' => 'income'
+            ]);
+        };
+        $incomeData = new Request([
+            'category_id' => $category->id,
+            'wallet_id' => $wallet->id,
+            'user_id' => $user->id,
+            'description' => 'Wallet Creation income',
+            'amount' => $request->amount,
+            'type' => 'income',
+            'action_date' => $wallet->created_at,
+        ]);
+        (new IncomeExpend())->store($incomeData);
+        
         return UserWalletResource::make($wallet);
     }
 
