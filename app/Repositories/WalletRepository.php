@@ -63,13 +63,22 @@ class WalletRepository
         ]);
 
         // income transaction for wallet creation
+        $this->incomeTransactionForWallet($request, $user, $wallet);
+
+        return UserWalletResource::make($wallet);
+    }
+
+    public function incomeTransactionForWallet($request, $user, $wallet)
+    {
+        // to make sure that category for deposit exit
         $category = Category::where('name', self::DEPOSITE)->first();
-        if(!$category){
+        if (!$category) {
             $category = Category::create([
                 'name' => 'Deposite',
                 'type' => 'income'
             ]);
         };
+        // data for income transaction
         $incomeData = new Request([
             'category_id' => $category->id,
             'wallet_id' => $wallet->id,
@@ -79,9 +88,8 @@ class WalletRepository
             'type' => 'income',
             'action_date' => $wallet->created_at,
         ]);
-        (new IncomeExpend())->store($incomeData);
         
-        return UserWalletResource::make($wallet);
+        (new IncomeExpend())->store($incomeData);
     }
 
     public function UserWallet($request)
