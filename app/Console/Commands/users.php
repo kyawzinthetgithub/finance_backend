@@ -27,10 +27,22 @@ class users extends Command
      */
     public function handle()
     {
-        User::create([
+        User::create(
+            [
             'name' => 'test',
             'email' => 'test@email.com',
             'password' => Hash::make('secret')
-        ]);
+            ],
+            [
+            'name' => 'alex',
+            'email' => 'alex@gmail.com',
+            'password' => Hash::make('secret')
+            ],
+            [
+                'name' => 'Bruno',
+                'email' => 'bruno@gmail.com',
+                'password' => Hash::make('secret')
+            ]
+         );
     }
 }
