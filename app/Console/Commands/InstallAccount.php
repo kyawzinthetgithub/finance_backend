@@ -2,7 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Models\User;
+use App\Models\WalletType;
 use Illuminate\Console\Command;
+use Illuminate\Support\Testing\Fakes\Fake;
 
 class InstallAccount extends Command
 {
@@ -25,6 +28,16 @@ class InstallAccount extends Command
      */
     public function handle()
     {
-        //
+        $wallet = WalletType::all()->pluck('id');
+        $accountData = [
+            [
+                'name' =>  fake()->randomElement(['Yoma Bank', 'KBZ Bank', 'AYA Bank', 'MAB Bank']),
+                'amount' => rand(1000, 10000),
+                'wallet_type_id' => fake()->randomElement($wallet)
+            ],
+        ];
+        $users = User::all();
+        
+        
     }
 }
