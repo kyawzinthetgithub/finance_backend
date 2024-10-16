@@ -13,7 +13,7 @@ class HomePageController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $income = IncomeExpend::query()
+        $incomeExpend = IncomeExpend::query()
                     ->where('user_id', $user->id)
                     ->when($request->month, function($query, $month){
                         $query->whereMonth('action_date', $month);
@@ -23,11 +23,18 @@ class HomePageController extends Controller
                     ->select(
                         'type',
                         'user_id',
-                        DB::raw("SUM(amount) as amount")
+                        'wallet',
+                        DB::raw("SUM(amount) as amount"),
                     )
                     ->groupBy('type')
                     ->get();
 
-        return $income;
+        $userWallet = $user->wallets->sum('amount');
+        $data = [
+            'transaction' => $incomeExpend,
+            'walletBalance' => $userWallet
+        ];
+        
+        return json_response(200, 'Data Retrived Successfully', $data);
     }
 }
