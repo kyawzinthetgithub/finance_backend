@@ -14,6 +14,11 @@ class IncomeController extends Controller
         $this->repo = $repo;
     }
 
+    public function index(Request $request)
+    {
+        return $this->repo->index($request);
+    }
+
     public function store(Request $request)
     {
         return $this->repo->store($request);

@@ -19,6 +19,12 @@ class IncomeRepository
         return $this->hashids->decode($id)[0];
     }
 
+    public function index($request)
+    {
+        $data = IncomeExpend::all();
+        return $data;
+    }
+
     public function store($request)
     {
         $income = (new IncomeExpend())->store($request);

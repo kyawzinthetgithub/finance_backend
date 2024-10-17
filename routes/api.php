@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
     //income
     Route::group(['prefix' => 'income','controller' => IncomeController::class],function(){
         Route::post('/create','store');
+        Route::get('/list', 'index');
     });
 
 
