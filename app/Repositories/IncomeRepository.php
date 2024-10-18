@@ -49,6 +49,7 @@ class IncomeRepository
                 ->when($request->boolean('year'), function($query) {
                     $query->whereYear('action_date', Carbon::now()->year);
                 })
+                ->orderBy('action_date', 'desc')
                 ->get();
         $result = IncomeExpendResource::collection($data);
         $message = 'IncomeExpend Transaction Retrived Successfully';
