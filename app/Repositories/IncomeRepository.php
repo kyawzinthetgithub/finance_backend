@@ -37,16 +37,16 @@ class IncomeRepository
 
         $data = IncomeExpend::query()
                 ->where('user_id', $user->id)
-                ->when($request->has('today'), function($query) {
+                ->when($request->boolean('today'), function($query) {
                     $query->whereDate('action_date', Carbon::now());
                 })
-                ->when($request->has('week'), function($query) use($startOfWeek,$endOfWeek) {
+                ->when($request->boolean('week'), function($query) use($startOfWeek,$endOfWeek) {
                     $query->whereBetween('action_date', [$startOfWeek, $endOfWeek]);
                 })
-                ->when($request->has('month'), function($query) {
+                ->when($request->boolean('month'), function($query) {
                     $query->whereMonth('action_date', Carbon::now()->month);
                 })
-                ->when($request->has('year'), function($query) {
+                ->when($request->boolean('year'), function($query) {
                     $query->whereYear('action_date', Carbon::now()->year);
                 })
                 ->get();
