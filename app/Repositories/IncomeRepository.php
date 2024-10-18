@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\IncomeExpend\IncomeExpendResource;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use App\Models\Wallet;
@@ -28,8 +29,8 @@ class IncomeRepository
         $startOfWeek = null;
         $endOfWeek = null;
         if ($request->has('week')) {
-            $week = $request->get('week', Carbon::now()->weekOfYear);
-            $year = $request->get('year', Carbon::now()->year);
+            $week = Carbon::now()->weekOfYear;
+            $year = Carbon::now()->year;
             $startOfWeek = Carbon::now()->setISODate($year, $week)->startOfWeek();
             $endOfWeek = Carbon::now()->setISODate($year, $week)->endOfWeek();
         }
@@ -49,7 +50,9 @@ class IncomeRepository
                     $query->whereYear('action_date', Carbon::now()->year);
                 })
                 ->get();
-        return $data;
+        $result = IncomeExpendResource::collection($data);
+        $message = 'IncomeExpend Transaction Retrived Successfully';
+        return json_response(200, $message, $result);
     }
 
     public function store($request)

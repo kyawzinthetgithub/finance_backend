@@ -25,7 +25,8 @@ class IncomeExpendResource extends JsonResource
             'amount' => $this->amount??'-',
             'type' => $this->type??'-',
             'created_at' => $this->created_at?->format('d-m-Y h:m:s a') ?? '-',
-            'deleted_at' => $this->deleted_at?->format('d-m-Y h:m:s a') ?? '-'
+            'deleted_at' => $this->deleted_at?->format('d-m-Y h:m:s a') ?? '-',
+            'time' => $this->created_at?->format('h:m A') ?? '-',
         ];
     }
 }
