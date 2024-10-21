@@ -8,47 +8,46 @@ return [
   [
     'name' => 'Jane Smith',
     'email' => 'jane.smith@example.com',
-    'password' => 'password456'
+    'password' => 'password123'
   ],
   [
     'name' => 'Michael Johnson',
     'email' => 'michael.johnson@example.com',
-    'password' => 'password789'
+    'password' => 'password123'
   ],
   [
     'name' => 'Emily Davis',
     'email' => 'emily.davis@example.com',
-    'password' => 'passw0rd'
+    'password' => 'password123'
   ],
   [
     'name' => 'Chris Brown',
     'email' => 'chris.brown@example.com',
-    'password' => 'letmein'
+    'password' => 'password123'
   ],
   [
     'name' => 'Sarah Wilson',
     'email' => 'sarah.wilson@example.com',
-    'password' => 'qwerty123'
+    'password' => 'password123'
   ],
   [
     'name' => 'David Taylor',
     'email' => 'david.taylor@example.com',
-    'password' => 'ilovecode'
+    'password' => 'password123'
   ],
   [
     'name' => 'Linda Anderson',
     'email' => 'linda.anderson@example.com',
-    'password' => 'admin123'
+    'password' => 'password123'
   ],
   [
     'name' => 'Matthew Harris',
     'email' => 'matthew.harris@example.com',
-    'password' => 'supersecret'
+    'password' => 'password123'
   ],
   [
     'name' => 'Laura Martin',
     'email' => 'laura.martin@example.com',
-    'password' => 'pass123'
+    'password' => 'password123'
   ],
 ];
-
