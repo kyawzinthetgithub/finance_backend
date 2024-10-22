@@ -36,21 +36,21 @@ class IncomeRepository
         }
 
         $data = IncomeExpend::query()
-                ->where('user_id', $user->id)
-                ->when($request->boolean('today'), function($query) {
-                    $query->whereDate('action_date', Carbon::now());
-                })
-                ->when($request->boolean('week'), function($query) use($startOfWeek,$endOfWeek) {
-                    $query->whereBetween('action_date', [$startOfWeek, $endOfWeek]);
-                })
-                ->when($request->boolean('month'), function($query) {
-                    $query->whereMonth('action_date', Carbon::now()->month);
-                })
-                ->when($request->boolean('year'), function($query) {
-                    $query->whereYear('action_date', Carbon::now()->year);
-                })
-                ->orderBy('action_date', 'desc')
-                ->get();
+            ->where('user_id', $user->id)
+            ->when($request->boolean('today'), function ($query) {
+                $query->whereDate('action_date', Carbon::now());
+            })
+            ->when($request->boolean('week'), function ($query) use ($startOfWeek, $endOfWeek) {
+                $query->whereBetween('action_date', [$startOfWeek, $endOfWeek]);
+            })
+            ->when($request->boolean('month'), function ($query) {
+                $query->whereMonth('action_date', Carbon::now()->month);
+            })
+            ->when($request->boolean('year'), function ($query) {
+                $query->whereYear('action_date', Carbon::now()->year);
+            })
+            ->orderBy('action_date', 'desc')
+            ->get();
         $result = IncomeExpendResource::collection($data);
         $message = 'IncomeExpend Transaction Retrived Successfully';
         return json_response(200, $message, $result);

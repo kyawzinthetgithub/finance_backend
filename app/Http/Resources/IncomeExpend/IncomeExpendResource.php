@@ -20,10 +20,11 @@ class IncomeExpendResource extends JsonResource
         $category = Category::findOrFail($this->category_id);
         return [
             'id' => $this->id ? makeHash($this->id) : '-',
-            'category' => $this->category_id?CategoryResource::make($category):null,
-            'description' => $this->description??'-',
-            'amount' => $this->amount??'-',
-            'type' => $this->type??'-',
+            'category' => $this->category_id ? CategoryResource::make($category) : null,
+            'description' => $this->description ?? '-',
+            'amount' => $this->amount ?? '-',
+            'type' => $this->type ?? '-',
+            'action_date' => $this->action_date->format('d-m-Y h:m:s a'),
             'created_at' => $this->created_at?->format('d-m-Y h:m:s a') ?? '-',
             'deleted_at' => $this->deleted_at?->format('d-m-Y h:m:s a') ?? '-',
             'time' => $this->created_at?->format('h:m A') ?? '-',
