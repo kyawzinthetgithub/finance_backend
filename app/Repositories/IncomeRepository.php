@@ -24,6 +24,10 @@ class IncomeRepository
 
     public function index($request)
     {
+
+        $request->validate([
+            'category_id' => 'nullable|array'
+        ]);
         $user = Auth::user();
 
         $startOfWeek = null;
@@ -48,6 +52,12 @@ class IncomeRepository
             })
             ->when($request->boolean('year'), function ($query) {
                 $query->whereYear('action_date', Carbon::now()->year);
+            })
+            ->when($request->has('category_id'), function ($query, $category_id) {
+                $query->whereIn('category_id', $category_id);
+            })
+            ->when($request->has('type'), function ($query, $type) {
+                $query->where('type', $type);
             })
             ->orderBy('action_date', 'desc')
             ->get();
