@@ -10,54 +10,59 @@ use App\Http\Controllers\Api\IncomeController;
 use App\Http\Controllers\Api\Wallet\WalletController;
 use App\Http\Controllers\Api\WalletType\WalletTypeController;
 use App\Http\Controllers\Api\IncomeExpendCategory\CategoryController;
-
+use App\Http\Controllers\BudgetController;
 
 //auth
-Route::post('/register',[AuthController::class,'register']);
-Route::post('/login',[AuthController::class,'login']);
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::middleware(['auth:sanctum','frontendapi'])->group(function () {
+Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
     //user
-    Route::post('/logout',[AuthController::class,'logout']);
-    Route::get('/profile-edit/{id}',[AuthController::class,'edit']);
-    Route::post('/profile-update/{id}',[AuthController::class,'update']);
-    Route::post('/change-password/{id}',[AuthController::class,'changePassword']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile-edit/{id}', [AuthController::class, 'edit']);
+    Route::post('/profile-update/{id}', [AuthController::class, 'update']);
+    Route::post('/change-password/{id}', [AuthController::class, 'changePassword']);
 
     //wallet_type
-    Route::get('wallet-type',[WalletTypeController::class,'getAll']);
+    Route::get('wallet-type', [WalletTypeController::class, 'getAll']);
 
     //category (income_category and expend_category)
-    Route::group(['controller' => CategoryController::class,'prefix' => 'category'],function(){
-        Route::get('/','index');
+    Route::group(['controller' => CategoryController::class, 'prefix' => 'category'], function () {
+        Route::get('/', 'index');
         Route::post('/store', 'store');
     });
 
     //wallet
-    Route::group(['prefix'=>'wallet','controller'=>WalletController::class],function(){
-        Route::post('/create','store');
-        Route::get('/user-wallet','UserWallet');
-        Route::delete('/delete/{walletId}','destory');
-        Route::get('/restore','getDeleteWallet');
-        Route::post('/restore','restoreWallet');
-        Route::post('/transfer','transfer');
+    Route::group(['prefix' => 'wallet', 'controller' => WalletController::class], function () {
+        Route::post('/create', 'store');
+        Route::get('/user-wallet', 'UserWallet');
+        Route::delete('/delete/{walletId}', 'destory');
+        Route::get('/restore', 'getDeleteWallet');
+        Route::post('/restore', 'restoreWallet');
+        Route::post('/transfer', 'transfer');
 
         //get wallet detail with income and expend
-        Route::get('/detail/{id}','AccountDetail');
+        Route::get('/detail/{id}', 'AccountDetail');
     });
 
     //income
-    Route::group(['prefix' => 'income','controller' => IncomeController::class],function(){
-        Route::post('/create','store');
+    Route::group(['prefix' => 'income', 'controller' => IncomeController::class], function () {
+        Route::post('/create', 'store');
         Route::get('/list', 'index');
     });
 
 
     //expend
-    Route::group(['prefix' => 'expend','controller' => ExpendController::class],function(){
-        Route::post('/create','store');
+    Route::group(['prefix' => 'expend', 'controller' => ExpendController::class], function () {
+        Route::post('/create', 'store');
     });
 
     // for home page
-    Route::get('/income-expend',[HomePageController::class, 'index']);
+    Route::get('/income-expend', [HomePageController::class, 'index']);
+
+    //expend
+    Route::group(['prefix' => 'budget', 'controller' => BudgetController::class], function () {
+        Route::post('/store', 'store');
+    });
 });
