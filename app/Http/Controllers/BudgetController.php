@@ -15,11 +15,12 @@ class BudgetController extends Controller
 
     public function index()
     {
-        // index listing logic 
+        // index listing logic
     }
 
     public function store(Request $request)
     {
+        // logger($request->all());
         $data = $this->repo->store($request);
 
         if (isset($data)) {
