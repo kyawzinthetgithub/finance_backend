@@ -22,6 +22,16 @@ class IncomeRepository
         return $this->hashids->decode($id)[0];
     }
 
+    public function detail($id)
+    {
+        $incomeId = $this->byHash($id);
+        $income = IncomeExpend::find($incomeId);
+
+        $data = new IncomeExpendResource($income);
+        $message = 'Income Retrived Successfully';
+        return json_response(200, $message, $data);
+    }
+
     public function index($request)
     {
 
