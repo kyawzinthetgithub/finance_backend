@@ -14,6 +14,11 @@ class ExpendController extends Controller
         $this->repo = $repo;
     }
 
+    public function detail($id)
+    {
+        return $this->repo->detail($id);
+    }
+
     public function store(Request $request)
     {
         return $this->repo->store($request);

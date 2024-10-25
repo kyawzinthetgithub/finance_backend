@@ -57,6 +57,7 @@ Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
     //expend
     Route::group(['prefix' => 'expend', 'controller' => ExpendController::class], function () {
         Route::post('/create', 'store');
+        Route::get('/detail/{id}', 'detail');
     });
 
     // for home page
