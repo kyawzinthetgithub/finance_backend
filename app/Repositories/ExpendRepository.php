@@ -23,7 +23,7 @@ class ExpendRepository
     public function detail($id)
     {
         $expendId = $this->byHash($id);
-        $expend = IncomeExpend::find($id);
+        $expend = IncomeExpend::find($expendId);
 
         $data = new IncomeExpendResource($expend);
         $message = "Expend Retrived Successfully";

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\IncomeExpend;
 
 use App\Http\Resources\Category\CategoryResource;
+use App\Http\Resources\Wallet\UserWalletResource;
 use App\Models\Category;
 use App\Models\Wallet;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class IncomeExpendResource extends JsonResource
         return [
             'id' => $this->id ? makeHash($this->id) : '-',
             'category' => $this->category_id ? CategoryResource::make($category) : null,
+            'wallet' => $this->wallet_id ? UserWalletResource::make(Wallet::find($this->wallet_id)) : null,
             'description' => $this->description ?? '-',
             'amount' => $this->amount ?? '-',
             'type' => $this->type == 'expend' ? 'expense' : $this->type,
