@@ -28,26 +28,33 @@ class BudgetRepository
 
     public function store($request)
     {
-        $data = $request->validate([
-            'category_id' => 'required',
-            'total' => 'required'
-        ]);
+        $data = $request->validate(
+            [
+                'category_id' => 'required',
+                'total' => 'required'
+            ],
+            [
+                'category_id.required' => 'The category field is required. Please select a category.',
+                'total.required' => 'The total field is required. Please provide the total amount.'
+            ]
+        );
 
         $category_id = $this->byHash($request->category_id);
 
         // check if the budget is already created with this category!!
-        $budget = $this->model()->where('category_id', $category_id)->first();
-        $today = Carbon::now(); //for check budget is expired or not
         $user = Auth::user();
+        $budget = $this->model()->where('category_id', $category_id)->where('user_id',$user->id)->first();
+        $today = Carbon::now(); //for check budget is expired or not
+        $expired_date = Carbon::now()->endOfMonth();
         $data['user_id'] = $user->id;
         $data['alert'] = $request->alert ?? false;
-        $data['expired_at'] = $today->endOfMonth();
+        $data['expired_at'] = $expired_date;
         $data['category_id'] = $category_id;
-
-        abort_if($budget && $budget->expired_at == $today, 422, "Your Budget is still active and it's not expried.");
-
         if ($budget) {
-            return '';
+            abort_if($budget && $budget->expired_at > $today, 422, "Your Budget is still active and it's not expried.");
+            $budget->update($data);
+            $message = "Category Updated Successfully";
+            return json_response(201, $message, $budget);
         } else {
             $budget = $this->model()->create($data);
             $message = "Category Created Successfully";
