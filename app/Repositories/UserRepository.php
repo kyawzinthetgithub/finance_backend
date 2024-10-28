@@ -45,6 +45,7 @@ class UserRepository
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'currency' => $request->currency,
             'password' => Hash::make($request->password),
             'image' => $image && $request->image ? $image->id : null
         ]);
@@ -96,7 +97,7 @@ class UserRepository
     public function update($request, $id)
     {
         $user = User::findOrFail($this->byHash($id));
-        $userImage = Image::where('id',$user->image)->latest()->first();
+        $userImage = Image::where('id', $user->image)->latest()->first();
         $request->validate([
             'name' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -106,13 +107,13 @@ class UserRepository
 
         if ($request->hasFile('image')) {
             if ($userImage) {
-                $image = $this->cloudinary->update($userImage,$request->file('image'));
-            }else{
+                $image = $this->cloudinary->update($userImage, $request->file('image'));
+            } else {
                 $image = $this->cloudinary->upload($request->file('image'));
             }
         }
         $user->name = $request->name;
-        $user->email = $request->email??$user->email;
+        $user->email = $request->email ?? $user->email;
         $user->image = $image && $request->file('image') ? $image->id : $user->image;
         $user->save();
 
