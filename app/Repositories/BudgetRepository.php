@@ -2,9 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Budget\BudgetResource;
 use Carbon\Carbon;
 use Hashids\Hashids;
 use App\Models\Budget;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BudgetRepository
@@ -43,7 +47,7 @@ class BudgetRepository
 
         // check if the budget is already created with this category!!
         $user = Auth::user();
-        $budget = $this->model()->where('category_id', $category_id)->where('user_id',$user->id)->first();
+        $budget = $this->model()->where('category_id', $category_id)->where('user_id', $user->id)->first();
         $today = Carbon::now(); //for check budget is expired or not
         $expired_date = Carbon::now()->endOfMonth();
         $data['user_id'] = $user->id;
@@ -60,5 +64,29 @@ class BudgetRepository
             $message = "Category Created Successfully";
             return json_response(201, $message, $budget);
         }
+    }
+
+    public function userBudget(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|min:2000|max:' . Carbon::now()->year,
+            'per_page' => 'integer|min:1|max:100',
+        ]);
+        $month = $request->month;
+        $perPage = $request->input('per_page', 10);
+        $year = $request->year;
+        $auth_user = Auth::user();
+        $user = User::findOrFail($auth_user->id);
+        $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth()->endOfDay();
+        $data = $this->model()
+        ->with('user') // Eager load user and category relationships
+        ->whereBetween('expired_at', [$startDate, $endDate])
+        ->paginate($perPage);
+
+    // Return the paginated data as a resource collection
+    return BudgetResource::collection($data);
+
     }
 }

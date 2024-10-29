@@ -28,4 +28,10 @@ class BudgetController extends Controller
             return json_response(201, $message, $data);
         }
     }
+
+    public function userBudget(Request $request)
+    {
+        $data = $this->repo->userBudget($request);
+        return json_response(200,'success',$data);
+    }
 }
