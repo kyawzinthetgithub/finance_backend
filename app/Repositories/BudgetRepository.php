@@ -54,6 +54,7 @@ class BudgetRepository
         $data['alert'] = $request->alert ?? false;
         $data['expired_at'] = $expired_date;
         $data['category_id'] = $category_id;
+        $data['remaining_amount'] = $request->total;
         if ($budget) {
             abort_if($budget && $budget->expired_at > $today, 422, "Your Budget is still active and it's not expried.");
             $budget->update($data);
