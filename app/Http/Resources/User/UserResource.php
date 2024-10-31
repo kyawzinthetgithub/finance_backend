@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'name' => $this->name ?? '-',
             'email' => $this->email ?? '-',
             'image' => $this->image ? Image::findOrFail($this->image)->image_url : null,
+            'currency' => $this->currency,
             'created_at' => $this->created_at ? $this->created_at->format('d-m-Y h:ma') : '-'
         ];
     }

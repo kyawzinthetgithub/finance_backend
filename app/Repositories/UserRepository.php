@@ -114,6 +114,7 @@ class UserRepository
         }
         $user->name = $request->name;
         $user->email = $request->email ?? $user->email;
+        $user->currency = $request->currency ?? $user->email;
         $user->image = $image && $request->file('image') ? $image->id : $user->image;
         $user->save();
 
