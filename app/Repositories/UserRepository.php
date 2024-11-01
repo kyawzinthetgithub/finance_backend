@@ -129,7 +129,7 @@ class UserRepository
             'new_password' => 'required|min:6|max:12',
             'confirm_password' => 'required|min:6|max:12|same:new_password'
         ]);
-        abort_if(!Hash::check($request->old_password, $user->password), 401, 'wrong password');
+        abort_if(!Hash::check($request->old_password, $user->password), 401, 'Incorrect Password !!');
         $user->update([
             'password' => Hash::make($request->confirm_password)
         ]);
