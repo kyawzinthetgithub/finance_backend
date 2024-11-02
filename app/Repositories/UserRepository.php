@@ -68,9 +68,7 @@ class UserRepository
         $user = User::where('email', $request->email)->latest()->first();
         abort_if(!$user, 422, 'You haven\'t register yet');
         if ($user && !Hash::check($request->password, $user->password)) {
-            return [
-                'message' => 'Unauthenticated'
-            ];
+            abort(422, 'Credentials does not match!');
         } else {
             $token = $user->createToken($user->name);
             return [
