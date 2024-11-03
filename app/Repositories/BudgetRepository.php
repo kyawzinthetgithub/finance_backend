@@ -56,9 +56,16 @@ class BudgetRepository
         $data['category_id'] = $category_id;
         $data['remaining_amount'] = $request->total;
         if ($budget) {
-            abort_if($budget && $budget->expired_at > $today, 422, "Your Budget is still active and it's not expried.");
-            $budget->update($data);
-            $message = "Category Updated Successfully";
+            if ($budget->expired_at->isSameMonth($today)) {
+                // If the budget is still active for the same month, update it
+                $budget->update($data);
+                $message = "Budget Updated Successfully for the current month.";
+            } else {
+                // If the month is different, create a new budget
+                $data['remaining_amount'] = $request->total;
+                $budget = $this->model()->create($data);
+                $message = "New Budget Created Successfully for a new month.";
+            }
             return json_response(201, $message, $budget);
         } else {
             $budget = $this->model()->create($data);
@@ -82,12 +89,11 @@ class BudgetRepository
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
         $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth()->endOfDay();
         $data = $this->model()
-        ->with('user') // Eager load user and category relationships
-        ->whereBetween('expired_at', [$startDate, $endDate])
-        ->paginate($perPage);
+            ->with('user') // Eager load user and category relationships
+            ->whereBetween('expired_at', [$startDate, $endDate])
+            ->paginate($perPage);
 
-    // Return the paginated data as a resource collection
-    return BudgetResource::collection($data);
-
+        // Return the paginated data as a resource collection
+        return BudgetResource::collection($data);
     }
 }
