@@ -36,7 +36,8 @@ class AuthController extends Controller
         return $res;
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $response = $this->repo->logout($request);
         return $response;
     }
@@ -47,15 +48,17 @@ class AuthController extends Controller
         return (new UserResource($response));
     }
 
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-        $response = $this->repo->update($request,$id);
+        $response = $this->repo->update($request, $id);
         return (new UserResource($response));
     }
 
-    public function changePassword(Request $request,$id)
+    public function changePassword(Request $request, $id)
     {
-        $response = $this->repo->changePassword($request,$id);
-        return (new UserResource($response));
+        $response = $this->repo->changePassword($request, $id);
+        $result = new UserResource($response);
+        $message = "Your Password Updated Successfully";
+        return json_response(200, $message, $result);
     }
 }

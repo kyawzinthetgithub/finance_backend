@@ -68,9 +68,7 @@ class UserRepository
         $user = User::where('email', $request->email)->latest()->first();
         abort_if(!$user, 422, 'You haven\'t register yet');
         if ($user && !Hash::check($request->password, $user->password)) {
-            return [
-                'message' => 'Unauthenticated'
-            ];
+            abort(422, 'Credentials does not match!');
         } else {
             $token = $user->createToken($user->name);
             return [
@@ -114,6 +112,7 @@ class UserRepository
         }
         $user->name = $request->name;
         $user->email = $request->email ?? $user->email;
+        $user->currency = $request->currency ?? $user->email;
         $user->image = $image && $request->file('image') ? $image->id : $user->image;
         $user->save();
 
@@ -128,7 +127,7 @@ class UserRepository
             'new_password' => 'required|min:6|max:12',
             'confirm_password' => 'required|min:6|max:12|same:new_password'
         ]);
-        abort_if(!Hash::check($request->old_password, $user->password), 401, 'wrong password');
+        abort_if(!Hash::check($request->old_password, $user->password), 401, 'Incorrect Password !!');
         $user->update([
             'password' => Hash::make($request->confirm_password)
         ]);
