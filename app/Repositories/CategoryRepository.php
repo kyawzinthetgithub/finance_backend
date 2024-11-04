@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use App\Models\Category;
 use App\Services\CloudinaryService;
 
@@ -22,8 +23,11 @@ class CategoryRepository
     {
         $category = $this->model()
             ->query()
-            ->when($request->input('type'), function($query, $type){
+            ->when($request->input('type'), function ($query, $type) {
                 $query->where('type', $type);
+            })
+            ->when($request->boolean('budget'), function ($query) {
+                $query->with('budgets');
             })
             ->get();
         return $category;
@@ -34,7 +38,7 @@ class CategoryRepository
         $data = $this->createPayload($request);
         $category = $this->model()->create($data);
         $message = "Category Created Successfully";
-        return json_response(201,$message, $category);
+        return json_response(201, $message, $category);
     }
 
     protected function createPayload($request)
@@ -44,7 +48,7 @@ class CategoryRepository
             'type' => $request->type
         ];
         $icon = null;
-        if($request->hasFile('icon')){
+        if ($request->hasFile('icon')) {
             $icon = $this->cloudinary->upload($request->file('icon'));
             $data['icon'] = $icon->id;
         }

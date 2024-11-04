@@ -19,10 +19,11 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id?makeHash($this->id):'-',
+            'id' => $this->id ? makeHash($this->id) : '-',
             'name' => $this->name,
             'type' => $this->type,
-            'icon' => $this->icon ? Image::where('id',$this->icon)->latest()->first()->image_url : null
+            'budget' => $this->budgets ?? null,
+            'icon' => $this->icon ? Image::where('id', $this->icon)->latest()->first()->image_url : null
         ];
     }
 }

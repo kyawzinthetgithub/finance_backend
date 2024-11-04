@@ -13,7 +13,7 @@ class Category extends Model
     protected $fillable = [
         'name',
         'type',
-        'icon'
+        'icon',
     ];
 
     const CATEGORY_TYPE = [
@@ -21,9 +21,9 @@ class Category extends Model
         'expend' => 'expend'
     ];
 
-    public function budget()
+    public function budgets()
     {
-        return $this->belongsTo(Budget::class);
+        return $this->hasMany(Budget::class);
     }
 
     public function getWithType($type)
