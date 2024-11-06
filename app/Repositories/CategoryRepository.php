@@ -5,6 +5,7 @@ namespace App\Repositories;
 use Carbon\Carbon;
 use App\Models\Category;
 use App\Services\CloudinaryService;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryRepository
 {
@@ -29,7 +30,7 @@ class CategoryRepository
             ->when($request->boolean('budget'), function ($query) {
                 // If the budget is true, get only non-expired budgets
                 $query->with(['budgets' => function ($query) {
-                    $query->where('expired_at', '>', Carbon::now());
+                    $query->where('expired_at', '>', Carbon::now())->where('user_id', Auth::user()->id);
                 }]);
             })
             ->get();
