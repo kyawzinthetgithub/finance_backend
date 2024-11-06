@@ -27,9 +27,13 @@ class CategoryRepository
                 $query->where('type', $type);
             })
             ->when($request->boolean('budget'), function ($query) {
-                $query->with('budgets');
+                $query->has('budgets');
             })
+            ->with(['budgets' => function ($query) {
+                $query->where('expired_at', '>', Carbon::now());
+            }])
             ->get();
+
         return $category;
     }
 
