@@ -27,12 +27,17 @@ class CategoryRepository
                 $query->where('type', $type);
             })
             ->when($request->boolean('budget'), function ($query) {
-                $query->has('budgets');
+                // If the budget is true, get only non-expired budgets
+                $query->with(['budgets' => function ($query) {
+                    $query->where('expired_at', '>', Carbon::now());
+                }]);
             })
-            ->with(['budgets' => function ($query) {
-                $query->where('expired_at', '>', Carbon::now());
-            }])
             ->get();
+
+        // If 'budget' is not true, don't load any budgets
+        if (!$request->boolean('budget')) {
+            $category->load('budgets');
+        }
 
         return $category;
     }

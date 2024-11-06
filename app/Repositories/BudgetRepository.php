@@ -85,11 +85,10 @@ class BudgetRepository
         $perPage = $request->input('per_page', 10);
         $year = $request->year;
         $auth_user = Auth::user();
-        $user = User::findOrFail($auth_user->id);
         $startDate = Carbon::createFromDate($year, $month, 1)->startOfDay();
         $endDate = Carbon::createFromDate($year, $month, 1)->endOfMonth()->endOfDay();
         $data = $this->model()
-            ->with('user') // Eager load user and category relationships
+            ->where('user_id', $auth_user->id)
             ->whereBetween('expired_at', [$startDate, $endDate])
             ->paginate($perPage);
 
