@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class IncomeExpend extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'category_id',
         'wallet_id',
@@ -45,6 +45,7 @@ class IncomeExpend extends Model
         $walletId = byHash($data->wallet_id);
         $wallet = Wallet::findOrFail($walletId);
         $user = Auth::user();
+        $budget = Budget::where('category_id', $categoryId)->where('expired_at', '>', Carbon::now())->where('user_id', $user->id)->latest()->first();
 
         self::create([
             'category_id' => $categoryId,
@@ -58,9 +59,14 @@ class IncomeExpend extends Model
 
         $validType == 'income' ? $wallet->amount += $data->amount : $wallet->amount -= $data->amount;
         $wallet->save();
+
+        if ($budget) {
+            $budget->spend_amound = $data->amount;
+            $budget->usage = $data->amount;
+            $budget->remaining_amount = $budget->total - $data->amount;
+            $budget->save();
+        }
         return response(['message' => 'success']);
-
-
     }
 
     //relation with wallet and income_expend
@@ -74,7 +80,7 @@ class IncomeExpend extends Model
         return $this->belongsTo(User::class);
     }
 
-     // Scope for filtering by specific day
+    // Scope for filtering by specific day
     public function scopeForDay($query, $date)
     {
         $parsedDate = Carbon::parse($date);
