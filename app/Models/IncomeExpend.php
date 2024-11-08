@@ -61,9 +61,9 @@ class IncomeExpend extends Model
         $wallet->save();
 
         if ($budget) {
-            $budget->spend_amound = $data->amount;
-            $budget->usage = $data->amount;
-            $budget->remaining_amount = $budget->total - $data->amount;
+            $budget->spend_amount += $data->amount;
+            $budget->usage += $data->amount;
+            $budget->remaining_amount = $budget->remaining_amount - $data->amount;
             $budget->save();
         }
         return response(['message' => 'success']);
