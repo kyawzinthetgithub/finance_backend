@@ -33,22 +33,23 @@ class InstallExpense extends Command
         $users = User::whereHas('wallets')->get();
         $this->info('Start Creating Expend for ' . Carbon::now()->format('Y-m-d H:m'));
         foreach ($users as $user) {
-            $category = Category::where('type', 'expend')->inRandomOrder()->first();
-            $wallet = $user->wallets()->inRandomOrder()->first();
-            // dd($wallet->id);
-            $amount = rand(1000, 5000);
-            IncomeExpend::create([
-                'category_id' => $category->id,
-                'wallet_id' => $wallet->id,
-                'user_id' => $user->id,
-                'description' => 'Seeding From Command for ' . Carbon::now()->format('H:m'),
-                'amount' => $amount,
-                'type' => 'expend',
-                'action_date' => Carbon::now()->format('Y-m-d')
-            ]);
+            $wallets = $user->wallets()->get();
+            foreach ($wallets as $wallet) {
+                $amount = rand(1000, 5000);
+                $category = Category::where('type', 'expend')->inRandomOrder()->first();
+                IncomeExpend::create([
+                    'category_id' => $category->id,
+                    'wallet_id' => $wallet->id,
+                    'user_id' => $user->id,
+                    'description' => 'Seeding From Command for ' . Carbon::now()->format('H:m'),
+                    'amount' => $amount,
+                    'type' => 'expend',
+                    'action_date' => Carbon::now()->format('Y-m-d')
+                ]);
 
-            $wallet->amount -= $amount;
-            $wallet->save();
+                $wallet->amount -= $amount;
+                $wallet->save();
+            }
         }
 
         $this->info('Finished Creating Expend Data');
