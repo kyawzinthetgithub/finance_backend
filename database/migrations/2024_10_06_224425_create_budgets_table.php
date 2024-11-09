@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->nullable()->references('id')->on('categories')->onDelete('cascade')->constrained();
             $table->foreignId('user_id')->nullable()->references('id')->on('users')->onDelete('cascade')->constrained();
             $table->integer('total');
-            $table->integer('spend_amound')->nullable();
+            $table->integer('spend_amount')->nullable();
             $table->integer('remaining_amount')->nullable();
             $table->boolean('alert')->default(0)->nullable();
             $table->integer('usage')->default(0);
