@@ -9,6 +9,7 @@
         "cloudinary-labs/cloudinary-laravel": "^2.2",
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.16",
         "laravel/tinker": "^2.9",
         "vinkla/hashids": "^12.0"
     },

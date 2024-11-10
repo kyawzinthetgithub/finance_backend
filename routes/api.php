@@ -16,6 +16,9 @@ use App\Http\Controllers\BudgetController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+//socialite
+Route::post('/{provider}/login', [AuthController::class, 'socialLoginUser']);
+
 
 Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
     //user

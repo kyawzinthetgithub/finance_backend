@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email')->unique()->nullable(false);
             $table->string('currency')->nullable();
             $table->foreignId('image')->nullable()->references('id')->on('images')->onDelete('cascade')->constrained();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

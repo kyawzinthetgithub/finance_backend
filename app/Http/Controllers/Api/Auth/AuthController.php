@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\User\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Socialite\Facades\Socialite;
+use App\Http\Resources\User\UserResource;
+use GuzzleHttp\Exception\ClientException;
 
 class AuthController extends Controller
 {
@@ -60,5 +62,53 @@ class AuthController extends Controller
         $result = new UserResource($response);
         $message = "Your Password Updated Successfully";
         return json_response(200, $message, $result);
+    }
+
+    protected function validateProvider($provider)
+    {
+        if (!in_array($provider, ['facebook', 'github', 'google'])) {
+            return response()->json(['error' => 'Please login using facebook, github or google'], 422);
+        }
+    }
+
+    public function socialLoginUser(Request $request, $provider)
+    {
+        logger( $request->access_token);
+
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
+        }
+        try {
+            $user = Socialite::driver($provider)->userFromToken( $request->access_token);
+        } catch (ClientException $exception) {
+            return response()->json(['error' => 'Invalid credentials provided.'], 422);
+        }
+
+        $userCreated = User::firstOrCreate(
+            [
+                'email' => $user->getEmail()
+            ],
+            [
+                'email_verified_at' => now(),
+                'name' => $user->getName() ? $user->getName() : $user->getNickname(),
+                'currency' => 'ks' //default
+            ]
+        );
+        $userCreated->providers()->updateOrCreate(
+            [
+                'provider' => $provider,
+                'provider_id' => $user->getId(),
+            ],
+            [
+                'avatar' => $user->getAvatar()
+            ]
+        );
+        $token = $userCreated->createToken($provider)->plainTextToken;
+        logger($token);
+        return [
+            'user' => $userCreated,
+            'token' => $token
+        ];
     }
 }

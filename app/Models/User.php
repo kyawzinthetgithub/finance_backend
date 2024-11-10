@@ -60,4 +60,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Budget::class);
     }
+
+    public function providers()
+    {
+        return $this->hasMany(Provider::class, 'user_id', 'id');
+    }
 }
