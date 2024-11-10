@@ -18,17 +18,17 @@ class BudgetResource extends JsonResource
      */
     public function toArray(Request $request)
     {
-        $category = Category::where('id',$this->category_id)->latest()->first();
+        $category = Category::where('id', $this->category_id)->latest()->first();
         return [
             'id' => makeHash($this->id),
             'user' => $this->user_id ? UserResource::make($this->user) : null,
             'alert' => $this->alert == 1 ? true : false,
             'category' => $this->category_id ? CategoryResource::make($category) : null,
             'expired_at' => $this->expired_at->format('d-m-Y h:m:s a') ?? '-',
-            'remaining_amount' => $this->remaining_amount??0,
-            'spend_amound' => $this->spend_amound??0,
-            'total' => $this->total??0,
-            'usage' => $this->usage??0
+            'remaining_amount' => $this->remaining_amount ?? 0,
+            'spend_amount' => $this->spend_amount ?? 0,
+            'total' => $this->total ?? 0,
+            'usage' => $this->usage ?? 0
         ];
     }
 }
