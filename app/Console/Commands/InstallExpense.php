@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Budget;
 use App\Models\Wallet;
 use App\Models\Category;
 use App\Models\IncomeExpend;
@@ -49,6 +50,15 @@ class InstallExpense extends Command
 
                 $wallet->amount -= $amount;
                 $wallet->save();
+                $budget = Budget::where('category_id', $category->id)->where('expired_at', '>', Carbon::now())->where('user_id', $user->id)->latest()->first();
+                if ($budget) {
+                    $budget->update([
+                        'spend_amount' => $budget->amount + $amount,
+                        'usage' => $budget->usage + $amount,
+                        'remaining_amount' => $budget->remaining - $amount
+                    ]);
+                    $budget->refresh();
+                }
             }
         }
 
