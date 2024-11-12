@@ -64,12 +64,18 @@ class IncomeRepository
                 $query->whereYear('action_date', Carbon::now()->year);
             })
             ->when($request->has('category_id'), function ($query, $category_id) {
-                $query->whereIn('category_id', $category_id);
+                $query->whereIn('category_id', $this->byHash($category_id));
             })
             ->when($request->has('type'), function ($query, $type) {
                 $query->where('type', $type);
             })
-            ->orderBy('action_date', 'desc')
+            ->when($request->has('sort'), function ($query, $sort) {
+                if ($sort == 'highest' || $sort == 'lowest') {
+                    $query->orderBy('amount', $sort == 'highest' ? 'asc' : 'desc');
+                } else {
+                    $query->orderBy('action_date', $sort == 'newest' ? 'desc' : 'asc');
+                }
+            })
             ->get();
         $result = IncomeExpendResource::collection($data);
         $message = 'IncomeExpend Transaction Retrived Successfully';
