@@ -19,6 +19,8 @@ class IncomeRepository
 
     public function byHash($id)
     {
+        info('here');
+        info($id);
         return $this->hashids->decode($id)[0];
     }
 
@@ -36,7 +38,7 @@ class IncomeRepository
     {
 
         $request->validate([
-            'category_id' => 'nullable|array'
+            'category_id' => 'nullable|string'
         ]);
         $user = Auth::user();
 
@@ -63,13 +65,14 @@ class IncomeRepository
             ->when($request->boolean('year'), function ($query) {
                 $query->whereYear('action_date', Carbon::now()->year);
             })
-            ->when($request->has('category_id'), function ($query, $category_id) {
-                $query->whereIn('category_id', $this->byHash($category_id));
+            ->when($request->has('category_id'), function ($query) use ($request) {
+                $query->where('category_id', $this->byHash($request->category_id));
             })
-            ->when($request->has('type'), function ($query, $type) {
-                $query->where('type', $type);
+            ->when($request->has('type'), function ($query) use ($request) {
+                $query->where('type', $request->type);
             })
-            ->when($request->has('sort'), function ($query, $sort) {
+            ->when($request->has('sort'), function ($query) use ($request) {
+                $sort = $request->sort;
                 if ($sort == 'highest' || $sort == 'lowest') {
                     $query->orderBy('amount', $sort == 'highest' ? 'asc' : 'desc');
                 } else {
