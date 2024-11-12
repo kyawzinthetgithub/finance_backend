@@ -17,7 +17,7 @@ class InstallExpense extends Command
      *
      * @var string
      */
-    protected $signature = 'install:expense';
+    protected $signature = 'install:expense {date}'; // php artisan install:expense 2024-11-26 
 
     /**
      * The console command description.
@@ -31,6 +31,11 @@ class InstallExpense extends Command
      */
     public function handle()
     {
+        $inputDate = $this->argument('date');
+        $expenseCreationDate = Carbon::now()->format('Y-m-d');
+        if ($inputDate) {
+            $expenseCreationDate = Carbon::parse($inputDate)->format('Y-m-d');
+        }
         $users = User::whereHas('wallets')->get();
         $this->info('Start Creating Expend for ' . Carbon::now()->format('Y-m-d H:m'));
         foreach ($users as $user) {
@@ -45,7 +50,7 @@ class InstallExpense extends Command
                     'description' => 'Seeding From Command for ' . Carbon::now()->format('H:m'),
                     'amount' => $amount,
                     'type' => 'expend',
-                    'action_date' => Carbon::now()->format('Y-m-d')
+                    'action_date' => $expenseCreationDate,
                 ]);
 
                 $wallet->amount -= $amount;

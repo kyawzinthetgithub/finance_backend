@@ -15,7 +15,7 @@ class InstallIncome extends Command
      *
      * @var string
      */
-    protected $signature = 'install:income';
+    protected $signature = 'install:income {date}';
 
     /**
      * The console command description.
@@ -29,6 +29,11 @@ class InstallIncome extends Command
      */
     public function handle()
     {
+        $inputDate = $this->argument('date');
+        $incomeCreationDate = Carbon::now()->format('Y-m-d');
+        if ($inputDate) {
+            $incomeCreationDate = Carbon::parse($inputDate)->format('Y-m-d');
+        }
         $users = User::whereHas('wallets')->get();
         $this->info('Start Creating Income for ' . Carbon::now()->format('Y-m-d H:m'));
         foreach ($users as $user) {
@@ -43,7 +48,7 @@ class InstallIncome extends Command
                     'description' => 'Seeding From Command for ' . Carbon::now()->format('H:m'),
                     'amount' => $amount,
                     'type' => 'income',
-                    'action_date' => Carbon::now()->format('Y-m-d')
+                    'action_date' => $incomeCreationDate,
                 ]);
 
                 $wallet->amount += $amount;
