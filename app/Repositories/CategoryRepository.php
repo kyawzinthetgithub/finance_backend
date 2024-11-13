@@ -64,4 +64,9 @@ class CategoryRepository
         }
         return $data;
     }
+
+    public function detail($id)
+    {
+        return $this->model()->find($id);
+    }
 }

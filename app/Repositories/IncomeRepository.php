@@ -19,8 +19,6 @@ class IncomeRepository
 
     public function byHash($id)
     {
-        info('here');
-        info($id);
         return $this->hashids->decode($id)[0];
     }
 

@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
     Route::group(['controller' => CategoryController::class, 'prefix' => 'category'], function () {
         Route::get('/', 'index');
         Route::post('/store', 'store');
+        Route::get('/{id}', 'detail');
     });
 
     //wallet
@@ -69,6 +70,6 @@ Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
     //expend
     Route::group(['prefix' => 'budget', 'controller' => BudgetController::class], function () {
         Route::post('/store', 'store');
-        Route::get('user-budget','userBudget');
+        Route::get('user-budget', 'userBudget');
     });
 });
