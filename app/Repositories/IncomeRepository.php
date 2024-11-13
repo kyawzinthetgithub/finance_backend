@@ -65,18 +65,19 @@ class IncomeRepository
             ->when($request->boolean('year'), function ($query) {
                 $query->whereYear('action_date', Carbon::now()->year);
             })
-            ->when($request->has('category_id'), function ($query) use ($request) {
-                $query->where('category_id', $this->byHash($request->category_id));
+            ->when($request->input('category_id'), function ($query, $category_id) {
+                $query->where('category_id', $this->byHash($category_id));
             })
-            ->when($request->has('type'), function ($query) use ($request) {
-                $query->where('type', $request->type);
+            ->when($request->input('type'), function ($query, $type) {
+                $query->where('type', $type);
             })
-            ->when($request->has('sort'), function ($query) use ($request) {
-                $sort = $request->sort;
+            ->when($request->input('sort'), function ($query, $sort) {
                 if ($sort == 'highest' || $sort == 'lowest') {
-                    $query->orderBy('amount', $sort == 'highest' ? 'asc' : 'desc');
+                    $sorting = $sort == 'highest' ? 'desc' : 'asc';
+                    $query->orderBy('amount', $sorting);
                 } else {
-                    $query->orderBy('action_date', $sort == 'newest' ? 'desc' : 'asc');
+                    $sorting = $sort == 'newest' ? 'desc' : 'asc';
+                    $query->orderBy('action_date', $sorting);
                 }
             })
             ->get();
