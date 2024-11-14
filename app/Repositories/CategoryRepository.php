@@ -5,15 +5,23 @@ namespace App\Repositories;
 use Carbon\Carbon;
 use App\Models\Category;
 use App\Services\CloudinaryService;
+use Hashids\Hashids;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryRepository
 {
 
     protected $cloudinary;
-    public function __construct(CloudinaryService $cloudinaryService)
+    protected $hashIds;
+    public function __construct(CloudinaryService $cloudinaryService, HashIds $hashIds)
     {
         $this->cloudinary = $cloudinaryService;
+        $this->hashIds = $hashIds;
+    }
+
+    public function byHash($id)
+    {
+        return $this->hashIds->decode($id)[0];
     }
 
     protected function model()
@@ -67,6 +75,7 @@ class CategoryRepository
 
     public function detail($id)
     {
-        return $this->model()->find($id);
+        $cateId = $this->byHash($id);
+        return $this->model()->find($cateId);
     }
 }
