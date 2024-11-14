@@ -77,7 +77,12 @@ class CategoryRepository
     public function detail($id)
     {
         $cateId = $this->byHash($id);
-        return $this->model()->find($cateId);
+        $category = $this->model()->find($cateId);
+
+        $message = "Category Detail Retrived Successfully";
+        $data = new CategoryResource($category);
+
+        return json_response(200, $message, $data);
     }
 
     public function update($request, $id)
