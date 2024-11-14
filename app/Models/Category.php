@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Image;
 use App\Models\Budget;
 use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Model;
@@ -29,5 +30,10 @@ class Category extends Model
     public function getWithType($type)
     {
         return $this->whereIn('type', self::CATEGORY_TYPE)->where('type', $type);
+    }
+
+    public function image()
+    {
+        return $this->hasOne(Image::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Http\Resources\Category\CategoryResource;
 use Carbon\Carbon;
 use App\Models\Category;
 use App\Services\CloudinaryService;
@@ -77,5 +78,39 @@ class CategoryRepository
     {
         $cateId = $this->byHash($id);
         return $this->model()->find($cateId);
+    }
+
+    public function update($request, $id)
+    {
+        $category = $this->model()->find($this->byHash($id));
+        abort_unless($category, 404, "Category Not found for updating!!");
+
+        $iconId = $this->updateIcon($request, $category);
+        $name = $request->name;
+        $type = $request->type;
+
+        $category->name = $name;
+        $category->icon = $iconId;
+        $category->type = $type;
+        $category->save();
+
+        $message = "Category Updated Successfully";
+        $data = new CategoryResource($category);
+        return json_response(200, $message, $data);
+    }
+
+    protected function updateIcon($request, $category)
+    {
+        if ($request->hasFile('updated_icon')) {
+            $old_icon = $category->image->image_url;
+            if ($old_icon) {
+                $icon = $this->cloudinary->update($old_icon, $request->file('icon'));
+            } else {
+                $icon = $this->cloudinary->upload($request->file('icon'));
+            }
+
+            return $icon->id;
+        }
+        return null;
     }
 }

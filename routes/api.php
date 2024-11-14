@@ -35,6 +35,7 @@ Route::middleware(['auth:sanctum', 'frontendapi'])->group(function () {
         Route::get('/', 'index');
         Route::post('/store', 'store');
         Route::get('/{id}', 'detail');
+        Route::post('/{id}', 'update');
     });
 
     //wallet

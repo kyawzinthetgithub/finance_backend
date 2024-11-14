@@ -38,4 +38,10 @@ class CategoryController extends Controller
         $res = $this->repo->detail($id);
         return $res;
     }
+
+    public function update(Request $request, $id)
+    {
+        $res = $this->repo->update($request, $id);
+        return $res;
+    }
 }
