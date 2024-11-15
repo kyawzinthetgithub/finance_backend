@@ -2,12 +2,13 @@
 
 namespace App\Repositories;
 
-use App\Http\Resources\Category\CategoryResource;
 use Carbon\Carbon;
+use Hashids\Hashids;
+use App\Models\Image;
 use App\Models\Category;
 use App\Services\CloudinaryService;
-use Hashids\Hashids;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\Category\CategoryResource;
 
 class CategoryRepository
 {
@@ -107,11 +108,11 @@ class CategoryRepository
     protected function updateIcon($request, $category)
     {
         if ($request->hasFile('updated_icon')) {
-            $old_icon = $category->image->image_url;
+            $old_icon = Image::where('id', $category->icon)->latest()->first();
             if ($old_icon) {
-                $icon = $this->cloudinary->update($old_icon, $request->file('icon'));
+                $icon = $this->cloudinary->update($old_icon->image_url, $request->file('updated_icon'));
             } else {
-                $icon = $this->cloudinary->upload($request->file('icon'));
+                $icon = $this->cloudinary->upload($request->file('updated_icon'));
             }
 
             return $icon->id;
